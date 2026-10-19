@@ -24,7 +24,8 @@ final class LegacyBuildModels {
         if("block/orientable".equals(string)) return cube(resourceLocation,"#top","#top","#front","#side","#side","#side");
         if("block/orientable_with_bottom".equals(string)) return cube(resourceLocation,"#bottom","#top","#front","#side","#side","#side");
         if("block/orientable_vertical".equals(string)) return cube(resourceLocation,"#front","#front","#side","#side","#side","#side");
-        if("block/cross".equals(string) || "block/tinted_cross".equals(string) || "block/crop".equals(string)) return cross(resourceLocation);
+        if("block/cross".equals(string) || "block/tinted_cross".equals(string)) return cross(resourceLocation,"#cross");
+        if("block/crop".equals(string)) return cross(resourceLocation,"#crop");
         if("item/generated".equals(string)) return generated(resourceLocation,false);
         if("item/handheld".equals(string) || "item/handheld_rod".equals(string)) return generated(resourceLocation,true);
         return null;
@@ -74,24 +75,24 @@ final class LegacyBuildModels {
         return new LegacyModelDefinition(resourceLocation,null,Boolean.TRUE,"front",new LinkedHashMap<String,String>(),new ArrayList<LegacyModelDefinition.Element>(),true,display(generated),new ArrayList<LegacyModelDefinition.Override>(),true,generated,null);
    }
 
-   private static LegacyModelDefinition cross(ResourceLocation resourceLocation) {
+   private static LegacyModelDefinition cross(ResourceLocation resourceLocation,String string) {
         List<LegacyModelDefinition.Element> elementList=new ArrayList<LegacyModelDefinition.Element>();
-        elementList.add(crossElement());
-        elementList.add(crossElements());
+        elementList.add(crossElement(string));
+        elementList.add(crossElements(string));
         return new LegacyModelDefinition(resourceLocation,null,Boolean.FALSE,null,new LinkedHashMap<String,String>(),elementList,true,new LinkedHashMap<String,LegacyModelDefinition.Transform>(),new ArrayList<LegacyModelDefinition.Override>(),false,false,null);
    }
 
-   private static LegacyModelDefinition.Element crossElement() {
+   private static LegacyModelDefinition.Element crossElement(String string) {
         Map<LegacyDirection,LegacyModelDefinition.Face> faceMap=new EnumMap<LegacyDirection,LegacyModelDefinition.Face>(LegacyDirection.class);
-        faceMap.put(LegacyDirection.NORTH,new LegacyModelDefinition.Face(new float[] {0.0f,0.0f,16.0f,16.0f},"#cross",null,0,-1));
-        faceMap.put(LegacyDirection.SOUTH,new LegacyModelDefinition.Face(new float[] {0.0f,0.0f,16.0f,16.0f},"#cross",null,0,-1));
+        faceMap.put(LegacyDirection.NORTH,new LegacyModelDefinition.Face(new float[] {0.0f,0.0f,16.0f,16.0f},string,null,0,-1));
+        faceMap.put(LegacyDirection.SOUTH,new LegacyModelDefinition.Face(new float[] {0.0f,0.0f,16.0f,16.0f},string,null,0,-1));
         return new LegacyModelDefinition.Element(new float[] {0.8f,0.0f,8.0f},new float[] {15.2f,16.0f,8.0f},new LegacyModelDefinition.Rotation(new float[] {8.0f,8.0f,8.0f},LegacyModelDefinition.Axis.y,45.0f,true),false,faceMap);
    }
 
-    private static LegacyModelDefinition.Element crossElements() {
+    private static LegacyModelDefinition.Element crossElements(String string) {
         Map<LegacyDirection,LegacyModelDefinition.Face> faceMap=new EnumMap<LegacyDirection,LegacyModelDefinition.Face>(LegacyDirection.class);
-        faceMap.put(LegacyDirection.WEST,new LegacyModelDefinition.Face(new float[] {0.0f,0.0f,16.0f,16.0f},"#cross",null,0,-1));
-        faceMap.put(LegacyDirection.EAST,new LegacyModelDefinition.Face(new float[] {0.0f,0.0f,16.0f,16.0f},"#cross",null,0,-1));
+        faceMap.put(LegacyDirection.WEST,new LegacyModelDefinition.Face(new float[] {0.0f,0.0f,16.0f,16.0f},string,null,0,-1));
+        faceMap.put(LegacyDirection.EAST,new LegacyModelDefinition.Face(new float[] {0.0f,0.0f,16.0f,16.0f},string,null,0,-1));
         return new LegacyModelDefinition.Element(new float[] {8.0f,0.0f,0.8f},new float[] {8.0f,16.0f,15.2f},new LegacyModelDefinition.Rotation(new float[] {8.0f,8.0f,8.0f},LegacyModelDefinition.Axis.y,45.0f,true),false,faceMap);
     }
 

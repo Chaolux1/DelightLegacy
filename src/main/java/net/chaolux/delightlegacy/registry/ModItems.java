@@ -7,6 +7,7 @@ import net.chaolux.delightlegacy.common.item.*;
 import net.chaolux.delightlegacy.legacy.common.item.*;
 import net.chaolux.delightlegacy.legacy.registry.LegacyItemRegister;
 import net.chaolux.delightlegacy.legacy.registry.LegacyRegistryObject;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraftforge.common.MinecraftForge;
@@ -109,11 +110,11 @@ public class ModItems {
 //        public static final LegacyRegistryObject<Item> RED_MUSHROOM_COLONY;
         public static final LegacyRegistryObject<Item> CABBAGE;
         public static final LegacyRegistryObject<Item> TOMATO;
-//        public static final LegacyRegistryObject<Item> ONION;
+        public static final LegacyRegistryObject<Item> ONION;
         public static final LegacyRegistryObject<Item> RICE_PANICLE;
-//        public static final LegacyRegistryObject<Item> RICE;
-//        public static final LegacyRegistryObject<Item> CABBAGE_SEEDS;
-//        public static final LegacyRegistryObject<Item> TOMATO_SEEDS;
+        public static final LegacyRegistryObject<Item> RICE;
+        public static final LegacyRegistryObject<Item> CABBAGE_SEEDS;
+        public static final LegacyRegistryObject<Item> TOMATO_SEEDS;
 //        public static final LegacyRegistryObject<Item> ROTTEN_TOMATO;
         public static final LegacyRegistryObject<Item> FRIED_EGG;
         public static final LegacyRegistryObject<Item> MILK_BOTTLE;
@@ -326,11 +327,11 @@ public class ModItems {
 //            RED_MUSHROOM_COLONY = registerWithTab("red_mushroom_colony", () -> new MushroomColonyItem((Block) ModBlocks.RED_MUSHROOM_COLONY.get(), basicItem()));
             CABBAGE = registerWithTab("cabbage", () -> new LegacyItem(foodItem(FoodValues.CABBAGE)));
             TOMATO = registerWithTab("tomato", () -> new LegacyItem(foodItem(FoodValues.TOMATO)));
-//            ONION = registerWithTab("onion", () -> new ItemNameBlockItem((Block) ModBlocks.ONION_CROP.get(), foodItem(FoodValues.ONION)));
+            ONION = registerWithTab("onion", () -> new LegacySeedFoodItem(ModBlocks.ONION_CROP.getValue(), Blocks.farmland, foodItem(FoodValues.ONION)));
             RICE_PANICLE = registerWithTab("rice_panicle", () -> new LegacyItem(basicItem()));
-//            RICE = registerWithTab("rice", () -> new RiceItem((Block) ModBlocks.RICE_CROP.get(), basicItem()));
-//            CABBAGE_SEEDS = registerWithTab("cabbage_seeds", () -> new ItemNameBlockItem((Block) ModBlocks.CABBAGE_CROP.get(), basicItem()));
-//            TOMATO_SEEDS = registerWithTab("tomato_seeds", () -> new ItemNameBlockItem((Block) ModBlocks.BUDDING_TOMATO_CROP.get(), basicItem()) {
+            RICE = registerWithTab("rice", () -> new RiceItem(ModBlocks.RICE_CROP.getValue(), basicItem()));
+            CABBAGE_SEEDS = registerWithTab("cabbage_seeds", () -> new LegacySeedItem(ModBlocks.CABBAGE_CROP.getValue(), Blocks.farmland, basicItem()));
+            TOMATO_SEEDS = registerWithTab("tomato_seeds", () -> new LegacySeedItem(ModBlocks.BUDDING_TOMATO_CROP.getValue(), Blocks.farmland, basicItem()));
 //                public void registerBlocks(Map<Block, Item> blockToItemMap, Item item) {
 //                    super.registerBlocks(blockToItemMap, item);
 //                    if (ModBlocks.TOMATO_CROP.isPresent()) {

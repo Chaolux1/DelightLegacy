@@ -3,6 +3,7 @@ package net.chaolux.delightlegacy.legacy.assets.blockstates;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import net.chaolux.delightlegacy.legacy.assets.models.LegacyModelManager;
 import net.chaolux.delightlegacy.legacy.assets.models.LegacyModelRenderer;
+import net.chaolux.delightlegacy.legacy.common.block.LegacyLiquidBlock;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.world.IBlockAccess;
@@ -27,8 +28,16 @@ public class LegacyBlockRenderer implements ISimpleBlockRenderingHandler {
 
     @Override
     public boolean renderWorldBlock(IBlockAccess iBlockAccess,int x,int y,int z,Block block,int value,RenderBlocks renderBlocks) {
+        boolean render=false;
+        if(block instanceof LegacyLiquidBlock) {
+            Block liquidBlock=((LegacyLiquidBlock) block).getLiquid();
+            if(liquidBlock != null) {
+                render |= renderBlocks.renderBlockLiquid(liquidBlock,x,y,z);
+            }
+        }
         List<LegacyBlockStateDefinition.Model> modelList=LegacyModelManager.getInstance().getModel(iBlockAccess,x,y,z,block);
-        return LegacyModelRenderer.render(iBlockAccess,x,y,z,block,modelList);
+        render |= LegacyModelRenderer.render(iBlockAccess,x,y,z,block,modelList);
+        return render;
     }
 
     @Override
