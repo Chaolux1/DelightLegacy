@@ -2,6 +2,7 @@ package net.chaolux.delightlegacy.legacy.registry;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
+import net.minecraft.creativetab.CreativeTabs;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,8 +13,10 @@ public class LegacyBlockRegister<T extends Block> {
     private final String namespace;
     private final List<LegacyBlockRegistryObject<T>> list=new ArrayList<LegacyBlockRegistryObject<T>>();
     private boolean registered;
-    public LegacyBlockRegister(String namespace) {
+    private final CreativeTabs creativeTabs;
+    public LegacyBlockRegister(String namespace, CreativeTabs creativeTabs) {
         this.namespace=namespace;
+        this.creativeTabs=creativeTabs;
     }
 
     public LegacyBlockRegistryObject<T> register(String string, Supplier<? extends T> supplier) {
@@ -45,6 +48,7 @@ public class LegacyBlockRegister<T extends Block> {
         block.setBlockName(namespace + "." + legacyBlockRegistryObject.getString());
         block.setBlockTextureName("minecraft:stone");
         if(legacyBlockRegistryObject.isTab()) {
+            if(creativeTabs != null) block.setCreativeTab(creativeTabs);
             GameRegistry.registerBlock(block,legacyBlockRegistryObject.getString());
         } else {
             GameRegistry.registerBlock(block,null,legacyBlockRegistryObject.getString());

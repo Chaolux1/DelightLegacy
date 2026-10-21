@@ -2,9 +2,12 @@ package net.chaolux.delightlegacy.registry;
 
 import net.chaolux.delightlegacy.common.block.*;
 import net.chaolux.delightlegacy.legacy.assets.blockstates.LegacyCropStateMapper;
+import net.chaolux.delightlegacy.legacy.assets.blockstates.LegacyDataStateMapper;
+import net.chaolux.delightlegacy.legacy.common.block.LegacyBlockProperties;
 import net.chaolux.delightlegacy.legacy.registry.LegacyBlockRegister;
 import net.chaolux.delightlegacy.legacy.registry.LegacyBlockRegistryObject;
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 
 public class ModBlocks {
 
@@ -118,9 +121,9 @@ public class ModBlocks {
 //    public static final RegistryObject<Block> BLACK_HANGING_CANVAS_WALL_SIGN;
 //    public static final RegistryObject<Block> BROWN_MUSHROOM_COLONY;
 //    public static final RegistryObject<Block> RED_MUSHROOM_COLONY;
-//    public static final RegistryObject<Block> ORGANIC_COMPOST;
-//    public static final RegistryObject<Block> RICH_SOIL;
-//    public static final RegistryObject<Block> RICH_SOIL_FARMLAND;
+    public static final LegacyBlockRegistryObject<Block> ORGANIC_COMPOST;
+    public static final LegacyBlockRegistryObject<Block> RICH_SOIL;
+    public static final LegacyBlockRegistryObject<Block> RICH_SOIL_FARMLAND;
 //    public static final RegistryObject<Block> APPLE_PIE;
 //    public static final RegistryObject<Block> SWEET_BERRY_CHEESECAKE;
 //    public static final RegistryObject<Block> CHOCOLATE_PIE;
@@ -159,7 +162,7 @@ public class ModBlocks {
 //    }
 
     static {
-        BLOCKS = new LegacyBlockRegister("delightlegacy");
+        BLOCKS = new LegacyBlockRegister<Block>("delightlegacy",ModCreativeTabs.DELIGHT_LEGACY);
 //        STOVE = BLOCKS.register("stove", () -> new StoveBlock(Properties.copy(Blocks.BRICKS).lightLevel(litBlockEmission(13))));
 //        COOKING_POT = BLOCKS.register("cooking_pot", () -> new CookingPotBlock(Properties.of().mapColor(MapColor.METAL).strength(0.5F, 6.0F).sound(SoundType.LANTERN)));
 //        SKILLET = BLOCKS.register("skillet", () -> new SkilletBlock(Properties.of().mapColor(MapColor.METAL).strength(0.5F, 6.0F).sound(SoundType.LANTERN)));
@@ -265,9 +268,9 @@ public class ModBlocks {
 //        BLACK_HANGING_CANVAS_WALL_SIGN = BLOCKS.register("black_wall_hanging_canvas_sign", () -> new WallHangingCanvasSignBlock(Properties.copy(Blocks.SPRUCE_WALL_HANGING_SIGN).lootFrom(BLACK_HANGING_CANVAS_SIGN), DyeColor.BLACK));
 //        BROWN_MUSHROOM_COLONY = BLOCKS.register("brown_mushroom_colony", () -> new MushroomColonyBlock(Properties.copy(Blocks.BROWN_MUSHROOM), () -> Items.BROWN_MUSHROOM));
 //        RED_MUSHROOM_COLONY = BLOCKS.register("red_mushroom_colony", () -> new MushroomColonyBlock(Properties.copy(Blocks.RED_MUSHROOM), () -> Items.RED_MUSHROOM));
-//        ORGANIC_COMPOST = BLOCKS.register("organic_compost", () -> new OrganicCompostBlock(Properties.copy(Blocks.DIRT).strength(1.2F).sound(SoundType.CROP)));
-//        RICH_SOIL = BLOCKS.register("rich_soil", () -> new RichSoilBlock(Properties.copy(Blocks.DIRT).randomTicks()));
-//        RICH_SOIL_FARMLAND = BLOCKS.register("rich_soil_farmland", () -> new RichSoilFarmlandBlock(Properties.copy(Blocks.FARMLAND)));
+        ORGANIC_COMPOST = BLOCKS.register("organic_compost", () -> new OrganicCompostBlock(LegacyBlockProperties.copy(Material.ground).strength(1.2F).sound(Block.soundTypeGrass).randomTicks())).blockStateMapper(LegacyDataStateMapper.legacyDataStateMapper("composting",0,7));
+        RICH_SOIL = BLOCKS.register("rich_soil", () -> new RichSoilBlock(LegacyBlockProperties.copy(Material.ground).strength(0.5F).sound(Block.soundTypeGravel).randomTicks()));
+        RICH_SOIL_FARMLAND = BLOCKS.register("rich_soil_farmland", () -> new RichSoilFarmlandBlock(LegacyBlockProperties.copy(Material.ground).strength(0.6F).sound(Block.soundTypeGravel).randomTicks())).blockStateMapper(LegacyDataStateMapper.legacyDataStateMapper("moisture",0,7));
 //        APPLE_PIE = BLOCKS.register("apple_pie", () -> new PieBlock(Properties.copy(Blocks.CAKE), ModItems.APPLE_PIE_SLICE));
 //        SWEET_BERRY_CHEESECAKE = BLOCKS.register("sweet_berry_cheesecake", () -> new PieBlock(Properties.copy(Blocks.CAKE), ModItems.SWEET_BERRY_CHEESECAKE_SLICE));
 //        CHOCOLATE_PIE = BLOCKS.register("chocolate_pie", () -> new PieBlock(Properties.copy(Blocks.CAKE), ModItems.CHOCOLATE_PIE_SLICE));

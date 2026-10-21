@@ -6,6 +6,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import net.chaolux.delightlegacy.common.CommonProxy;
+import net.chaolux.delightlegacy.common.event.CommonEvents;
 import net.chaolux.delightlegacy.legacy.assets.LegacyResources;
 import net.chaolux.delightlegacy.legacy.assets.lang.LegacyLanguageLoader;
 import net.chaolux.delightlegacy.legacy.data.recipe.LegacyRecipeManager;
@@ -13,6 +14,7 @@ import net.chaolux.delightlegacy.registry.ModBlocks;
 import net.chaolux.delightlegacy.registry.ModItems;
 import net.chaolux.delightlegacy.registry.ModRecipeSerializers;
 import net.chaolux.delightlegacy.registry.ModRecipeTypes;
+import net.minecraft.util.CombatEntry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -40,6 +42,7 @@ public class DelightLegacy {
     @Mod.EventHandler
     public void init(FMLInitializationEvent ev) {
         COMMON_PROXY.init(ev);
+        CommonEvents.register();
 
     }
 

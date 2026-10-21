@@ -15,6 +15,7 @@ import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.event.TextureStitchEvent;
@@ -205,5 +206,13 @@ public class LegacyModelManager implements IResourceManagerReloadListener {
         long seed=(long) (x * 3129871) ^ (long) z * 116129781L ^ (long) y;
         seed=seed * seed * 42317861L + seed * 11L;
         return seed >> 16;
+    }
+
+    public IIcon getParticle(Block block,int data) {
+        for(LegacyBlockStateDefinition.Model model : getInventoryModel(block,data)) {
+            ResourceLocation resourceLocation=getBakedModel(model.getModel()).getParticle();
+            if(resourceLocation != null) return legacyTextureAtlas.getIcon(resourceLocation);
+        }
+        return Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite("missingno");
     }
 }

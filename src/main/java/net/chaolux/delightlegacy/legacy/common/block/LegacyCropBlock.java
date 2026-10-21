@@ -7,6 +7,7 @@ package net.chaolux.delightlegacy.legacy.common.block;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.chaolux.delightlegacy.legacy.assets.models.LegacyModelManager;
 import net.chaolux.delightlegacy.legacy.assets.models.LegacyModelRenderID;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockCrops;
@@ -41,10 +42,10 @@ public abstract class LegacyCropBlock extends BlockCrops {
         blockIcon=iIconRegister.registerIcon("minecraft:wheat_stage_0");
     }
 
-    @SideOnly(Side.CLIENT)
     @Override
+    @SideOnly(Side.CLIENT)
     public IIcon getIcon(int side,int data) {
-        return blockIcon;
+        return LegacyModelManager.getInstance().getParticle(this,data);
     }
 
     @Override
@@ -226,5 +227,4 @@ public abstract class LegacyCropBlock extends BlockCrops {
 
     protected abstract Item getSeed();
     protected abstract Item getCrop();
-
 }

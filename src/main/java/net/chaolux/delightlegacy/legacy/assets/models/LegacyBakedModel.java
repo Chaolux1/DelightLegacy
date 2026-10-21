@@ -20,7 +20,8 @@ public class LegacyBakedModel {
     private final String GUI;
     private final List<ResourceLocation> resourceLocationList;
     private final Set<ResourceLocation> resourceLocationSet;
-    public LegacyBakedModel(List<Quad> quadList,Map<String,LegacyModelDefinition.Transform> transformMap,List<LegacyModelDefinition.Override> overrideList,boolean generated,boolean handheld,boolean occlusion,String GUI,List<ResourceLocation> resourceLocationList,Set<ResourceLocation> resourceLocationSet) {
+    private final ResourceLocation resourceLocation;
+    public LegacyBakedModel(List<Quad> quadList,Map<String,LegacyModelDefinition.Transform> transformMap,List<LegacyModelDefinition.Override> overrideList,boolean generated,boolean handheld,boolean occlusion,String GUI,List<ResourceLocation> resourceLocationList,Set<ResourceLocation> resourceLocationSet,ResourceLocation resourceLocation) {
         this.quadList= Collections.unmodifiableList(new ArrayList<Quad>(quadList));
         this.transformMap=Collections.unmodifiableMap(new LinkedHashMap<String,LegacyModelDefinition.Transform>(transformMap));
         this.overrideList=Collections.unmodifiableList(new ArrayList<LegacyModelDefinition.Override>(overrideList));
@@ -30,6 +31,7 @@ public class LegacyBakedModel {
         this.GUI=GUI;
         this.resourceLocationList=Collections.unmodifiableList(new ArrayList<ResourceLocation>(resourceLocationList));
         this.resourceLocationSet=Collections.unmodifiableSet(new LinkedHashSet<ResourceLocation>(resourceLocationSet));
+        this.resourceLocation=resourceLocation;
     }
 
     public List<Quad> getQuad() {
@@ -143,5 +145,9 @@ public class LegacyBakedModel {
         public float getV() {
             return v;
         }
+    }
+
+    public ResourceLocation getParticle() {
+        return resourceLocation;
     }
 }

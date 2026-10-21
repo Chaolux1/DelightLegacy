@@ -6,6 +6,7 @@ import net.chaolux.delightlegacy.legacy.assets.models.LegacyModelRenderer;
 import net.chaolux.delightlegacy.legacy.common.block.LegacyLiquidBlock;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import org.lwjgl.opengl.GL11;
 
@@ -36,7 +37,8 @@ public class LegacyBlockRenderer implements ISimpleBlockRenderingHandler {
             }
         }
         List<LegacyBlockStateDefinition.Model> modelList=LegacyModelManager.getInstance().getModel(iBlockAccess,x,y,z,block);
-        render |= LegacyModelRenderer.render(iBlockAccess,x,y,z,block,modelList);
+        IIcon iIcon=renderBlocks.hasOverrideBlockTexture() ? renderBlocks.overrideBlockTexture : null;
+        render |= LegacyModelRenderer.render(iBlockAccess,x,y,z,block,modelList,iIcon);
         return render;
     }
 

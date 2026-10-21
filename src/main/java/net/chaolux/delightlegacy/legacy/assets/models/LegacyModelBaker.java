@@ -23,11 +23,11 @@ final class LegacyModelBaker {
                 resourceLocationSet.add(resourceLocation);
             }
         }
-        if(legacyModelDefinition.getTexture().containsKey("particle")) {
-            ResourceLocation resourceLocation=resolve(legacyModelDefinition,"#particle");
-            if(resourceLocation != null) resourceLocationSet.add(resourceLocation);
-        }
-        return new LegacyBakedModel(quadList,legacyModelDefinition.getTransform(),legacyModelDefinition.getOverride(),legacyModelDefinition.isGenerated(),legacyModelDefinition.isHandheld(),legacyModelDefinition.getOcclusion() == null || legacyModelDefinition.getOcclusion(),legacyModelDefinition.getGUI(),resourceLocationList,resourceLocationSet);
+        ResourceLocation resourceLocation=resolve(legacyModelDefinition,"#particle");
+        if(resourceLocation == null && !quadList.isEmpty()) resourceLocation=quadList.get(0).getLocation();
+        if(resourceLocation == null && !resourceLocationList.isEmpty()) resourceLocation=resourceLocationList.get(0);
+        if(resourceLocation != null) resourceLocationSet.add(resourceLocation);
+        return new LegacyBakedModel(quadList,legacyModelDefinition.getTransform(),legacyModelDefinition.getOverride(),legacyModelDefinition.isGenerated(),legacyModelDefinition.isHandheld(),legacyModelDefinition.getOcclusion() == null || legacyModelDefinition.getOcclusion(),legacyModelDefinition.getGUI(),resourceLocationList,resourceLocationSet,resourceLocation);
     }
 
     private void bakeElement(LegacyModelDefinition legacyModelDefinition,LegacyModelDefinition.Element element,List<LegacyBakedModel.Quad> quadList,Set<ResourceLocation> resourceLocationSet) {

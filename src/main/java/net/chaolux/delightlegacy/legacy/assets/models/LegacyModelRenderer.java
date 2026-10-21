@@ -21,12 +21,12 @@ import java.util.List;
 
 public class LegacyModelRenderer {
     private static final int BRIGHTNESS=0x00F000F0;
-    public static boolean render(IBlockAccess iBlockAccess, int x, int y, int z, Block block, List<LegacyBlockStateDefinition.Model> modelList) {
+    public static boolean render(IBlockAccess iBlockAccess, int x, int y, int z, Block block, List<LegacyBlockStateDefinition.Model> modelList,IIcon iIcon) {
         if(modelList == null || modelList.isEmpty()) return false;
         Tessellator tessellator=Tessellator.instance;
         for(LegacyBlockStateDefinition.Model model : modelList) {
             LegacyBakedModel legacyBakedModel=LegacyModelManager.getInstance().getBakedModel(model.getModel());
-            renderBake(iBlockAccess,x,y,z,block,legacyBakedModel,model,tessellator);
+            renderBake(iBlockAccess,x,y,z,block,legacyBakedModel,model,tessellator,iIcon);
         }
         return true;
     }
@@ -94,7 +94,7 @@ public class LegacyModelRenderer {
         GL11.glTranslatef(-translation[0] / 16.0f,-translation[1] / 16.0f,-translation[2] / 16.0f );
     }
 
-    private static void renderBake(IBlockAccess iBlockAccess,int x,int y,int z,Block block,LegacyBakedModel legacyBakedModel,LegacyBlockStateDefinition.Model model,Tessellator tessellator) {
+    private static void renderBake(IBlockAccess iBlockAccess,int x,int y,int z,Block block,LegacyBakedModel legacyBakedModel,LegacyBlockStateDefinition.Model model,Tessellator tessellator,IIcon iIcon) {
         for(LegacyBakedModel.Quad quad : legacyBakedModel.getQuad()) {
             LegacyDirection legacyDirection=quad.getDirection();
             if(legacyDirection != null) {
@@ -105,7 +105,7 @@ public class LegacyModelRenderer {
             int brightness=block.getMixedBrightnessForBlock(iBlockAccess,x + direction.getOffsetX(),y + direction.getOffsetY(),z + direction.getOffsetZ());
             tessellator.setBrightness(brightness);
             setColor(tessellator,iBlockAccess,x,y,z,block,quad,direction);
-            setQuad(tessellator,quad,model,x,y,z);
+            setQuad(tessellator,quad,model,x,y,z,iIcon);
         }
     }
 
@@ -113,7 +113,7 @@ public class LegacyModelRenderer {
         for (LegacyBakedModel.Quad quad : legacyBakedModel.getQuad()) {
             LegacyDirection legacyDirection=model == null ? quad.getLegacyDirection() : quad.getLegacyDirection().rotate(model.getRotateX(),model.getRotateY());
             setItemColor(tessellator,itemStack,quad,legacyDirection);
-            setQuad(tessellator,quad,model,0,0,0);
+            setQuad(tessellator,quad,model,0,0,0,null);
         }
     }
 
@@ -170,8 +170,8 @@ public class LegacyModelRenderer {
         GL11.glPopAttrib();
     }
 
-    private static void setQuad(Tessellator tessellator,LegacyBakedModel.Quad quad,LegacyBlockStateDefinition.Model model,int x,int y,int z) {
-        IIcon iIcon=LegacyModelManager.getInstance().getTexture().getIcon(quad.getLocation());
+    private static void setQuad(Tessellator tessellator,LegacyBakedModel.Quad quad,LegacyBlockStateDefinition.Model model,int x,int y,int z,IIcon iIcon) {
+        IIcon icon=iIcon != null ? iIcon : LegacyModelManager.getInstance().getTexture().getIcon(quad.getLocation());
         LegacyBakedModel.Vertex[] vertices=quad.getVertices();
         int rotate=0;
         if(model != null && model.isLock()) rotate=-(model.getRotateX() + model.getRotateY()) / 90;
@@ -180,8 +180,8 @@ public class LegacyModelRenderer {
             float[] floats=model == null ? new float[] {vertex.getX(),vertex.getY(),vertex.getZ()} : setRotate(vertex.getX(),vertex.getY(),vertex.getZ(),model.getRotateX(),model.getRotateY());
             int indexUV=((index + rotate) % 4 + 4) % 4;
             LegacyBakedModel.Vertex vertexUV=vertices[indexUV];
-            double u=iIcon.getInterpolatedU(vertexUV.getU());
-            double v=iIcon.getInterpolatedV(vertexUV.getV());
+            double u=icon.getInterpolatedU(vertexUV.getU());
+            double v=icon.getInterpolatedV(vertexUV.getV());
             tessellator.addVertexWithUV(x + floats[0],y + floats[1],z + floats[2],u,v);
         }
     }
