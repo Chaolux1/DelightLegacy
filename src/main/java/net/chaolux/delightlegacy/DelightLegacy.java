@@ -7,6 +7,7 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import net.chaolux.delightlegacy.common.CommonProxy;
 import net.chaolux.delightlegacy.common.event.CommonEvents;
+import net.chaolux.delightlegacy.common.tag.ModTags;
 import net.chaolux.delightlegacy.legacy.assets.LegacyResources;
 import net.chaolux.delightlegacy.legacy.assets.lang.LegacyLanguageLoader;
 import net.chaolux.delightlegacy.legacy.data.recipe.LegacyRecipeManager;
@@ -34,6 +35,7 @@ public class DelightLegacy {
         LegacyResources.initialize(DelightLegacy.class);
         ModBlocks.register();
         ModItems.register();
+        ModTags.register();
         ModRecipeTypes.resister();
         ModRecipeSerializers.register();
         COMMON_PROXY.preInit(fmlPreInitializationEvent);

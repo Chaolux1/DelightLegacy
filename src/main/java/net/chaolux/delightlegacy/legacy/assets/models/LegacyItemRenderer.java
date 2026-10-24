@@ -1,6 +1,7 @@
 package net.chaolux.delightlegacy.legacy.assets.models;
 
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.IItemRenderer;
 import org.lwjgl.opengl.GL11;
@@ -43,8 +44,14 @@ public class LegacyItemRenderer implements IItemRenderer {
             LegacyModelDefinition.Transform current=LegacyBuildModels.getItemTransform(string,legacyBakedModel.isHandheld());
             LegacyModelRenderer.apllyTransform(transform,current);
         } else {
-            LegacyModelRenderer.apply(legacyBakedModel.getTransform(string));
+            LegacyModelDefinition.Transform transform=legacyBakedModel.getTransform(string);
+            if(itemStack.getItem() instanceof ItemBlock && transform != LegacyModelDefinition.Transform.TRANSFORM) {
+                LegacyModelRenderer.apllyTransform(transform,LegacyBuildModels.getItemTransform(string,false));
+            } else {
+                LegacyModelRenderer.apply(transform);
+            }
         }
+        if(itemRenderType == ItemRenderType.INVENTORY && itemStack.getItem() instanceof ItemBlock && !legacyBakedModel.isGenerated()) GL11.glTranslatef(0.0f,-0.0625f,0.0f);
         LegacyModelRenderer.renderItemModel(itemStack,legacyBakedModel,itemRenderType == ItemRenderType.INVENTORY);
         GL11.glPopMatrix();
     }

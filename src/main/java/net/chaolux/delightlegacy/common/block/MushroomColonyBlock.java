@@ -3,6 +3,7 @@ package net.chaolux.delightlegacy.common.block;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.chaolux.delightlegacy.common.item.MushroomColonyItem;
+import net.chaolux.delightlegacy.common.utility.ItemUtils;
 import net.chaolux.delightlegacy.legacy.assets.models.LegacyModelManager;
 import net.chaolux.delightlegacy.legacy.assets.models.LegacyModelRenderID;
 import net.chaolux.delightlegacy.legacy.assets.models.LegacyModelRenderer;
@@ -98,12 +99,15 @@ public class MushroomColonyBlock extends LegacyBushBlock implements IGrowable, L
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityPlayer,int value,float mouseX,float mouseY,float mouseZ) {
         ItemStack itemStack=entityPlayer.getCurrentEquippedItem();
         int stage=getColonyAge(world.getBlockMetadata(x,y,z));
-        if(stage <= 0 || itemStack == null || itemStack.getItem() != Items.shears) return false;
+        if(stage <= 0 || itemStack == null) return false;
+        boolean shear=itemStack.getItem() == Items.shears;
+        boolean knife= ItemUtils.isKnife(itemStack);
+        if(!shear && !knife) return false;
         if(!world.isRemote) {
-            world.setBlockMetadataWithNotify(x,y,z,stage - 1,2);
-            dropBlockAsItem(world,x,y,z,new ItemStack(getMushroom(),1,0));
+            world.setBlockMetadataWithNotify(x,y,z,shear ? stage - 1 : 0,2);
+            dropBlockAsItem(world,x,y,z,new ItemStack(getMushroom(),shear ? 1 : stage,0));
             if(!entityPlayer.capabilities.isCreativeMode) itemStack.damageItem(1,entityPlayer);
-            world.playSoundEffect(x + 0.5,y + 0.5,z + 0.5,"mob.sheep.shear",1.0f,1.0f);
+            world.playSoundEffect(x + 0.5,y + 0.5,z + 0.5,shear ? "mob.sheep.shear" : "dig.grass",1.0f,1.0f);
         }
         return true;
     }

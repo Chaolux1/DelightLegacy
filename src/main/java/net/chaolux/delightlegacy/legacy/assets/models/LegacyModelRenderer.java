@@ -57,7 +57,7 @@ public class LegacyModelRenderer {
         }
         Tessellator tessellator=Tessellator.instance;
         tessellator.startDrawingQuads();
-        tessellator.setBrightness(BRIGHTNESS);
+        if(handheld) tessellator.setBrightness(BRIGHTNESS);
         renderBakeItem(itemStack,legacyBakedModel,null,tessellator);
         tessellator.draw();
     }
@@ -97,12 +97,19 @@ public class LegacyModelRenderer {
     private static void renderBake(IBlockAccess iBlockAccess,int x,int y,int z,Block block,LegacyBakedModel legacyBakedModel,LegacyBlockStateDefinition.Model model,Tessellator tessellator,IIcon iIcon) {
         for(LegacyBakedModel.Quad quad : legacyBakedModel.getQuad()) {
             LegacyDirection legacyDirection=quad.getDirection();
+            int mouseX=x;
+            int mouseY=y;
+            int mouseZ=z;
             if(legacyDirection != null) {
                 legacyDirection=legacyDirection.rotate(model.getRotateX(),model.getRotateY());
-                if(!block.shouldSideBeRendered(iBlockAccess,x + legacyDirection.getOffsetX(),y + legacyDirection.getOffsetY(),z + legacyDirection.getOffsetZ(),legacyDirection.getDirection())) continue;
+                mouseX += legacyDirection.getOffsetX();
+                mouseY += legacyDirection.getOffsetY();
+                mouseZ += legacyDirection.getOffsetZ();
+                if(!block.shouldSideBeRendered(iBlockAccess,mouseX,mouseY,mouseZ,legacyDirection.getDirection())) continue;
             }
             LegacyDirection direction=quad.getLegacyDirection().rotate(model.getRotateX(),model.getRotateY());
-            int brightness=block.getMixedBrightnessForBlock(iBlockAccess,x + direction.getOffsetX(),y + direction.getOffsetY(),z + direction.getOffsetZ());
+            if(legacyDirection == null && isUp(quad,model,direction)) mouseY=y + 1;
+            int brightness=block.getMixedBrightnessForBlock(iBlockAccess,mouseX,mouseY,mouseZ);
             tessellator.setBrightness(brightness);
             setColor(tessellator,iBlockAccess,x,y,z,block,quad,direction);
             setQuad(tessellator,quad,model,x,y,z,iIcon);
@@ -231,6 +238,17 @@ public class LegacyModelRenderer {
     private static float inverse(float value) {
         if(Math.abs(value) < 0.000001f) return 1.0f;
         return 1.0f / value;
+    }
+
+    private static boolean isUp(LegacyBakedModel.Quad quad,LegacyBlockStateDefinition.Model model,LegacyDirection legacyDirection) {
+        if(legacyDirection != LegacyDirection.UP) return false;
+        int x=model.getRotateX();
+        int y=model.getRotateY();
+        for(LegacyBakedModel.Vertex vertex : quad.getVertices()) {
+            float z=x == 0 && y == 0 ? vertex.getY() : setRotate(vertex.getX(),vertex.getY(),vertex.getZ(),x,y)[1];
+            if(z < 0.875f) return false;
+        }
+        return true;
     }
 
 }
