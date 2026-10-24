@@ -8,6 +8,8 @@ import net.chaolux.delightlegacy.legacy.registry.LegacyBlockRegister;
 import net.chaolux.delightlegacy.legacy.registry.LegacyBlockRegistryObject;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
 
 public class ModBlocks {
 
@@ -119,8 +121,8 @@ public class ModBlocks {
 //    public static final RegistryObject<Block> GREEN_HANGING_CANVAS_WALL_SIGN;
 //    public static final RegistryObject<Block> RED_HANGING_CANVAS_WALL_SIGN;
 //    public static final RegistryObject<Block> BLACK_HANGING_CANVAS_WALL_SIGN;
-//    public static final RegistryObject<Block> BROWN_MUSHROOM_COLONY;
-//    public static final RegistryObject<Block> RED_MUSHROOM_COLONY;
+    public static final LegacyBlockRegistryObject<Block> BROWN_MUSHROOM_COLONY;
+    public static final LegacyBlockRegistryObject<Block> RED_MUSHROOM_COLONY;
     public static final LegacyBlockRegistryObject<Block> ORGANIC_COMPOST;
     public static final LegacyBlockRegistryObject<Block> RICH_SOIL;
     public static final LegacyBlockRegistryObject<Block> RICH_SOIL_FARMLAND;
@@ -266,8 +268,8 @@ public class ModBlocks {
 //        GREEN_HANGING_CANVAS_WALL_SIGN = BLOCKS.register("green_wall_hanging_canvas_sign", () -> new WallHangingCanvasSignBlock(Properties.copy(Blocks.SPRUCE_WALL_HANGING_SIGN).lootFrom(GREEN_HANGING_CANVAS_SIGN), DyeColor.GREEN));
 //        RED_HANGING_CANVAS_WALL_SIGN = BLOCKS.register("red_wall_hanging_canvas_sign", () -> new WallHangingCanvasSignBlock(Properties.copy(Blocks.SPRUCE_WALL_HANGING_SIGN).lootFrom(RED_HANGING_CANVAS_SIGN), DyeColor.RED));
 //        BLACK_HANGING_CANVAS_WALL_SIGN = BLOCKS.register("black_wall_hanging_canvas_sign", () -> new WallHangingCanvasSignBlock(Properties.copy(Blocks.SPRUCE_WALL_HANGING_SIGN).lootFrom(BLACK_HANGING_CANVAS_SIGN), DyeColor.BLACK));
-//        BROWN_MUSHROOM_COLONY = BLOCKS.register("brown_mushroom_colony", () -> new MushroomColonyBlock(Properties.copy(Blocks.BROWN_MUSHROOM), () -> Items.BROWN_MUSHROOM));
-//        RED_MUSHROOM_COLONY = BLOCKS.register("red_mushroom_colony", () -> new MushroomColonyBlock(Properties.copy(Blocks.RED_MUSHROOM), () -> Items.RED_MUSHROOM));
+        BROWN_MUSHROOM_COLONY = BLOCKS.register("brown_mushroom_colony", () -> new MushroomColonyBlock(LegacyBlockProperties.copy(Material.plants), Blocks.brown_mushroom)).blockStateMapper(LegacyCropStateMapper.dataStateMapper(3));
+        RED_MUSHROOM_COLONY = BLOCKS.register("red_mushroom_colony", () -> new MushroomColonyBlock(LegacyBlockProperties.copy(Material.plants),Blocks.red_mushroom)).blockStateMapper(LegacyCropStateMapper.dataStateMapper(3));
         ORGANIC_COMPOST = BLOCKS.register("organic_compost", () -> new OrganicCompostBlock(LegacyBlockProperties.copy(Material.ground).strength(1.2F).sound(Block.soundTypeGrass).randomTicks())).blockStateMapper(LegacyDataStateMapper.legacyDataStateMapper("composting",0,7));
         RICH_SOIL = BLOCKS.register("rich_soil", () -> new RichSoilBlock(LegacyBlockProperties.copy(Material.ground).strength(0.5F).sound(Block.soundTypeGravel).randomTicks()));
         RICH_SOIL_FARMLAND = BLOCKS.register("rich_soil_farmland", () -> new RichSoilFarmlandBlock(LegacyBlockProperties.copy(Material.ground).strength(0.6F).sound(Block.soundTypeGravel).randomTicks())).blockStateMapper(LegacyDataStateMapper.legacyDataStateMapper("moisture",0,7));

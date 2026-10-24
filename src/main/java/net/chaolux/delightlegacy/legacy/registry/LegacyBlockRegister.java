@@ -49,7 +49,7 @@ public class LegacyBlockRegister<T extends Block> {
         block.setBlockTextureName("minecraft:stone");
         if(legacyBlockRegistryObject.isTab()) {
             if(creativeTabs != null) block.setCreativeTab(creativeTabs);
-            GameRegistry.registerBlock(block,legacyBlockRegistryObject.getString());
+            GameRegistry.registerBlock(block,legacyBlockRegistryObject.getItemblock(),legacyBlockRegistryObject.getString());
         } else {
             GameRegistry.registerBlock(block,null,legacyBlockRegistryObject.getString());
         }

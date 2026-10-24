@@ -4,6 +4,8 @@ import net.chaolux.delightlegacy.legacy.assets.ResourceLocations;
 import net.chaolux.delightlegacy.legacy.assets.blockstates.LegacyBlockStateMapper;
 import net.chaolux.delightlegacy.legacy.assets.blockstates.LegacyDataStateMapper;
 import net.minecraft.block.Block;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.function.Supplier;
@@ -16,6 +18,7 @@ public class LegacyBlockRegistryObject<T extends Block> {
     private ResourceLocation resourceLocation;
     private LegacyBlockStateMapper legacyBlockStateMapper;
     private T value;
+    private Class<? extends ItemBlock> itemblock;
     LegacyBlockRegistryObject(String namespace,String string,Supplier<? extends T> supplier,boolean tab) {
         this.namespace=namespace;
         this.string=string;
@@ -89,5 +92,19 @@ public class LegacyBlockRegistryObject<T extends Block> {
 
     public boolean isCreate() {
         return value != null;
+    }
+
+    public LegacyBlockRegistryObject<T> itemBlock(Class<? extends ItemBlock> itemblock) {
+        this.itemblock=itemblock;
+        return this;
+    }
+
+    public Class<? extends ItemBlock> getItemblock() {
+        if(itemblock != null) return itemblock;
+        if(value instanceof LegacyItemBlock) {
+            Class<? extends ItemBlock> itemBlock=((LegacyItemBlock)value).getItemBlock();
+            return itemBlock;
+        }
+        return ItemBlock.class;
     }
 }

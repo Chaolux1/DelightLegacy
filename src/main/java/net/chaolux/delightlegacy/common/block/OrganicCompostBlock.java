@@ -77,7 +77,7 @@ public class OrganicCompostBlock extends LegacyBlock {
         Block block=world.getBlock(x,y,z);
         if(block == Blocks.brown_mushroom || block == Blocks.red_mushroom || block == Blocks.mycelium) return true;
         if(block == Blocks.dirt && world.getBlockMetadata(x,y,z) == 2) return true;
-        return block == ModBlocks.ORGANIC_COMPOST.get() || block == ModBlocks.RICH_SOIL.get() || block == ModBlocks.RICH_SOIL_FARMLAND.get();
+        return block == ModBlocks.ORGANIC_COMPOST.get() || block == ModBlocks.RICH_SOIL.get() || block == ModBlocks.RICH_SOIL_FARMLAND.get() || block == ModBlocks.BROWN_MUSHROOM_COLONY.get() || block == ModBlocks.RED_MUSHROOM_COLONY.get();
     }
 
     public int getComposting(int value) {

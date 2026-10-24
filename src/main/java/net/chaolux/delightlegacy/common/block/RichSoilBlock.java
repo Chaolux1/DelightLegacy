@@ -3,6 +3,7 @@ package net.chaolux.delightlegacy.common.block;
 import net.chaolux.delightlegacy.legacy.assets.models.LegacyModelRenderID;
 import net.chaolux.delightlegacy.legacy.common.block.LegacyBlock;
 import net.chaolux.delightlegacy.legacy.common.block.LegacyBlockProperties;
+import net.chaolux.delightlegacy.registry.ModBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.IGrowable;
 import net.minecraft.block.material.Material;
@@ -23,7 +24,20 @@ public class RichSoilBlock extends LegacyBlock {
     @Override
     public void updateTick(World world, int x, int y, int z, Random random) {
         if(world.isRemote) return;
+        if(convertMushroomToColony(world,x,y + 1,z)) return;
         tryBoostingPlantsAboveAndBelow(world,x,y,z,random);
+    }
+
+    @Override
+    public boolean canSustainPlant(IBlockAccess iBlockAccess, int x, int y, int z, ForgeDirection forgeDirection, IPlantable iPlantable) {
+        if(forgeDirection != ForgeDirection.UP) return false;
+        EnumPlantType enumPlantType=iPlantable.getPlantType(iBlockAccess,x,y + 1,z);
+        return enumPlantType != EnumPlantType.Crop && enumPlantType != EnumPlantType.Nether && enumPlantType != EnumPlantType.Water;
+    }
+
+    @Override
+    public int getRenderType() {
+        return LegacyModelRenderID.getModelRenderID();
     }
 
     public static void tryBoostingPlantsAboveAndBelow(World world,int x,int y,int z,Random random) {
@@ -46,20 +60,19 @@ public class RichSoilBlock extends LegacyBlock {
     }
 
     private static boolean isDirt(Block block) {
-        return block == Blocks.grass || block == Blocks.tallgrass || block == Blocks.mycelium;
+        return block == Blocks.grass || block == Blocks.tallgrass || block == Blocks.mycelium || block == ModBlocks.BROWN_MUSHROOM_COLONY.get() || block == ModBlocks.RED_MUSHROOM_COLONY.get();
     }
 
-    @Override
-    public boolean canSustainPlant(IBlockAccess iBlockAccess, int x, int y, int z, ForgeDirection forgeDirection, IPlantable iPlantable) {
-        if(forgeDirection != ForgeDirection.UP) return false;
-        EnumPlantType enumPlantType=iPlantable.getPlantType(iBlockAccess,x,y + 1,z);
-        return enumPlantType != EnumPlantType.Crop && enumPlantType != EnumPlantType.Nether && enumPlantType != EnumPlantType.Water;
+    public boolean convertMushroomToColony(World world,int x,int y,int z) {
+        Block block=world.getBlock(x,y,z);
+        if(block == Blocks.brown_mushroom) {
+            world.setBlock(x,y,z, ModBlocks.BROWN_MUSHROOM_COLONY.get(),0,3);
+            return true;
+        }
+        if(block == Blocks.red_mushroom) {
+            world.setBlock(x,y,z,ModBlocks.RED_MUSHROOM_COLONY.get(),0,3);
+            return true;
+        }
+        return false;
     }
-
-    @Override
-    public int getRenderType() {
-        return LegacyModelRenderID.getModelRenderID();
-    }
-
-
 }
