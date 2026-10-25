@@ -22,6 +22,7 @@ public class ModTags {
             ItemStack itemStack=new ItemStack(item,1, OreDictionary.WILDCARD_VALUE);
             OreDictionary.registerOre(Items.KNIFE_DIG,itemStack);
             OreDictionary.registerOre(Items.KNIFE_HARVEST,itemStack.copy());
+            OreDictionary.registerOre(Items.KNIFE,itemStack);
         }
     }
 }

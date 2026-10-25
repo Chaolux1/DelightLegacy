@@ -10,7 +10,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import cpw.mods.fml.common.registry.GameRegistry;
+import net.chaolux.delightlegacy.common.utility.ItemUtils;
 import net.chaolux.delightlegacy.legacy.assets.ResourceLocations;
+import net.chaolux.delightlegacy.legacy.data.tags.LegacyTags;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -70,8 +72,15 @@ public class LegacyIngredient {
         JsonObject jsonObject=jsonElement.getAsJsonObject();
         boolean isItem=jsonObject.has("item");
         boolean isOre=jsonObject.has("ore");
-        if(isItem == isOre) throw new JsonSyntaxException("Ingredient must define exactly one of 'item' or 'ore'");
-        return isItem ? parseItemValue(jsonObject) : parseOreValue(jsonObject);
+        boolean isTag=jsonObject.has("tag");
+        boolean isType=jsonObject.has("type");
+        int value=(isItem ? 1 : 0) + (isOre ? 1 : 0) + (isTag ? 1 : 0) + (isType ? 1 : 0);
+        if(value != 1) throw new JsonSyntaxException("Ingredient must define exactly one of item or ore or tag or type");
+        if(isItem) return parseItemValue(jsonObject);
+        if(isOre) return parseOreValue(jsonObject);
+        if(isTag) return new TagValue(LegacyRecipeJson.getString(jsonObject,"tag"));
+        String string=LegacyRecipeJson.getString(jsonObject,"type");
+        return new ToolActionValue(LegacyRecipeJson.getString(jsonObject,"action"));
     }
 
     private static Value parseItemValue(JsonObject jsonObject) {
@@ -146,6 +155,52 @@ public class LegacyIngredient {
         @Override
         public String toString() {
             return "ore:" + string;
+        }
+    }
+
+    private static final class TagValue implements Value {
+        private final String string;
+        private TagValue(String string) {
+            if(string == null || string.isEmpty()) throw new JsonSyntaxException("Tag cannot be null");
+            this.string=string;
+        }
+
+        @Override
+        public boolean is(ItemStack itemStack) {
+            return LegacyTags.Items.isItem(string,itemStack);
+        }
+
+        @Override
+        public List<ItemStack> getMatches() {
+            return LegacyTags.Items.getItemStack(string);
+        }
+
+        @Override
+        public String toString() {
+            return "tag" + string;
+        }
+    }
+
+    private static final class ToolActionValue implements Value {
+        private final String string;
+        private ToolActionValue(String string) {
+            if(string == null || string.isEmpty()) throw new JsonSyntaxException("Action cannot be null");
+            this.string=string;
+        }
+
+        @Override
+        public boolean is(ItemStack itemStack) {
+            return ItemUtils.isToolAction(itemStack,string);
+        }
+
+        @Override
+        public List<ItemStack> getMatches() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public String toString() {
+            return "tool_action:" + string;
         }
     }
 }

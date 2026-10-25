@@ -1,5 +1,8 @@
 package net.chaolux.delightlegacy.legacy.assets;
 
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.ModContainer;
+import net.chaolux.delightlegacy.DelightLegacy;
 import net.minecraft.util.ResourceLocation;
 
 import java.io.File;
@@ -10,10 +13,7 @@ import java.net.JarURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
@@ -50,67 +50,16 @@ public class ClassPathResourceProvider implements ResourceProvider {
         String normal=normalize(string);
         String end=suffix == null ? "" : suffix;
         LinkedHashSet<ResourceLocation> locations=new LinkedHashSet<ResourceLocation>();
-        LinkedHashSet<String> linkedHashSet=new LinkedHashSet<String>();
-        Enumeration<URL> enumeration=classLoader.getResources(legacyPackType.getString());
-        while (enumeration.hasMoreElements()) {
-            URL url=enumeration.nextElement();
-            if("file".equals(url.getProtocol())) {
-                File file=getFile(url);
-                if(file != null && linkedHashSet.add("dir:" + file.getAbsolutePath())) scanPack(file,normal,end,locations);
-            } else if("jar".equals(url.getProtocol())) {
-                JarFile jarFile=((JarURLConnection) url.openConnection()).getJarFile();
-                if(linkedHashSet.add("jar:" + jarFile.getName())) scanJar(jarFile,legacyPackType,normal,end,locations);
-            }
-        }
-        ClassLoader loader=classLoader;
-        while (loader != null) {
-            if(loader instanceof URLClassLoader) {
-                for(URL url : ((URLClassLoader) loader).getURLs()) {
-                    scanURLClass(url,legacyPackType,normal,end,locations,linkedHashSet);
-                }
-            }
-            loader=loader.getParent();
-        }
-        String classPath=System.getProperty("java.class.path");
-        if(classPath != null && !classPath.isEmpty()) {
-            String[] strings=classPath.split(Pattern.quote(File.pathSeparator));
-            for (String entry : strings) {
-                if(!entry.isEmpty()) {
-                    try {
-                        scanClassFile(new File(entry),legacyPackType,normal,end,locations,linkedHashSet);
-                    } catch (IOException exception) {
-
-                    }
+        for(File file : getPack(legacyPackType)) {
+            if(file.isDirectory()) {
+                scanPack(new File(file,legacyPackType.getString()),normal,end,locations);
+            } else {
+                try(JarFile jarFile=new JarFile(file)) {
+                    scanJar(jarFile,legacyPackType,normal,end,locations);
                 }
             }
         }
         return Collections.unmodifiableSet(locations);
-    }
-
-    private void scanURLClass(URL url,LegacyPackType legacyPackType,String string,String suffix,Set<ResourceLocation> set,Set<String> strings) throws IOException {
-        if(url == null) return;
-        if("file".equals(url.getProtocol())) {
-            File file=getFile(url);
-            if(file != null) scanClassFile(file,legacyPackType,string,suffix,set,strings);
-        } else if("jar".equals(url.getProtocol())) {
-            JarFile jarFile=((JarURLConnection) url.openConnection()).getJarFile();
-            if(strings.add("jar:" + jarFile.getName())) scanJar(jarFile,legacyPackType,string,suffix,set);
-        }
-    }
-
-    private void scanClassFile(File file,LegacyPackType legacyPackType,String string,String suffix,Set<ResourceLocation> set,Set<String> strings) throws IOException {
-        if(file == null || !file.exists()) return;
-        if(file.isDirectory()) {
-            File pack=new File(file,legacyPackType.getString());
-            if(pack.isDirectory() && strings.add("dir:" + pack.getAbsolutePath())) scanPack(pack,string,suffix,set);
-            return;
-        }
-        String name=file.getName().toLowerCase();
-        if(!name.endsWith(".jar") && !name.endsWith(".zip")) return;
-        if(!strings.add("jar:" + file.getAbsolutePath())) return;
-        try(JarFile jarFile=new JarFile(file)) {
-            scanJar(jarFile,legacyPackType,string,suffix,set);
-        }
     }
 
     private void scanPack(File file,String string,String suffix,Set<ResourceLocation> set) {
@@ -187,6 +136,67 @@ public class ClassPathResourceProvider implements ResourceProvider {
             return new File(url.toURI());
         } catch (URISyntaxException exception) {
             return null;
+        }
+    }
+
+    public List<File> getPack(LegacyPackType legacyPackType) throws IOException {
+        if(legacyPackType == null) throw new IllegalArgumentException("Pack type cannot be null");
+        Map<String,File> stringFileMap=new LinkedHashMap<String,File>();
+        for (ModContainer modContainer : Loader.instance().getModList()) {
+            if(DelightLegacy.MOD_ID.equals(modContainer.getModId())) setPack(stringFileMap,modContainer.getSource(),legacyPackType);
+        }
+        for (ModContainer modContainer : Loader.instance().getModList()) {
+            setPack(stringFileMap,modContainer.getSource(),legacyPackType);
+        }
+        Enumeration<URL> urlEnumeration=classLoader.getResources(legacyPackType.getString());
+        while (urlEnumeration.hasMoreElements()) {
+            setURL(stringFileMap,urlEnumeration.nextElement(),legacyPackType,true);
+        }
+        ClassLoader loader=classLoader;
+        while (loader != null) {
+            if(loader instanceof URLClassLoader) {
+                for (URL url : ((URLClassLoader)loader).getURLs()) {
+                    setURL(stringFileMap,url,legacyPackType,false);
+                }
+            }
+            loader=loader.getParent();
+        }
+        String string=System.getProperty("java.class.path");
+        if(string != null && !string.isEmpty()) {
+            for (String data : string.split(Pattern.quote(File.pathSeparator))) {
+                if(!data.isEmpty()) setPack(stringFileMap,new File(data),legacyPackType);
+            }
+        }
+        return Collections.unmodifiableList(new ArrayList<File>(stringFileMap.values()));
+    }
+
+    private static void setPack(Map<String,File> stringFileMap,File file,LegacyPackType legacyPackType) {
+        if(file == null || !file.exists()) return;
+        if(file.isDirectory()) {
+            if(!new File(file,legacyPackType.getString()).isDirectory()) return;
+        } else if(file.isFile()) {
+            String string=file.getName().toLowerCase(Locale.ROOT);
+            if(!string.endsWith(".jar") && !string.endsWith(".zip")) return;
+        } else {
+            return;
+        }
+        try {
+            File files=file.getCanonicalFile();
+            stringFileMap.put(files.getPath(),files);
+        } catch (IOException ioException) {
+            File pack=file.getAbsoluteFile();
+            stringFileMap.put(pack.getPath(),pack);
+        }
+    }
+
+    private static void setURL(Map<String,File> stringFileMap,URL url,LegacyPackType legacyPackType,boolean value) throws IOException {
+        if(url == null) return;
+        if("file".equals(url.getProtocol())) {
+            File file=getFile(url);
+            if(file != null) setPack(stringFileMap,value ? file.getParentFile() : file,legacyPackType);
+        } else if("jar".equals(url.getProtocol())) {
+            URL urls=((JarURLConnection)url.openConnection()).getJarFileURL();
+            setPack(stringFileMap,getFile(urls),legacyPackType);
         }
     }
 }

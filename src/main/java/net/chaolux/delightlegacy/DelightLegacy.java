@@ -11,6 +11,7 @@ import net.chaolux.delightlegacy.common.tag.ModTags;
 import net.chaolux.delightlegacy.legacy.assets.LegacyResources;
 import net.chaolux.delightlegacy.legacy.assets.lang.LegacyLanguageLoader;
 import net.chaolux.delightlegacy.legacy.data.recipe.LegacyRecipeManager;
+import net.chaolux.delightlegacy.legacy.data.tags.LegacyTagManager;
 import net.chaolux.delightlegacy.registry.ModBlocks;
 import net.chaolux.delightlegacy.registry.ModItems;
 import net.chaolux.delightlegacy.registry.ModRecipeSerializers;
@@ -50,6 +51,7 @@ public class DelightLegacy {
 
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent fmlPostInitializationEvent) {
+        LegacyTagManager.getInstance().reload();
         LegacyRecipeManager.getInstance().reload();
         COMMON_PROXY.postInit(fmlPostInitializationEvent);
 
