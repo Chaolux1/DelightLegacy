@@ -1,6 +1,6 @@
 {
   "format_version": "1.9.0",
-  "parent": "block/thin_block",
+  "parent": "block/block",
   "textures": {
     "particle": "farmersdelight:block/cutting_board",
     "main": "farmersdelight:block/cutting_board"

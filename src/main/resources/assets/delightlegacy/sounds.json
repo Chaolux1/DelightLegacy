@@ -43,8 +43,8 @@
   },
   "block.cutting_board.knife_cut": {
     "sounds": [
-      "farmersdelight:block/cutting_board/knife1",
-      "farmersdelight:block/cutting_board/knife2"
+      "block/cutting_board/knife1",
+      "block/cutting_board/knife2"
     ],
     "subtitle": "subtitles.farmersdelight.block.cutting_board.knife_cut"
   },

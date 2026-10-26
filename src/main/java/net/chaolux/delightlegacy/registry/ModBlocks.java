@@ -19,7 +19,7 @@ public class ModBlocks {
 //    public static final RegistryObject<Block> SKILLET;
 //    public static final RegistryObject<Block> WOODEN_BASKET;
 //    public static final RegistryObject<Block> BAMBOO_BASKET;
-//    public static final RegistryObject<Block> CUTTING_BOARD;
+    public static final LegacyBlockRegistryObject<Block> CUTTING_BOARD;
 //    /** @deprecated */
 //    @Deprecated(
 //        forRemoval = true
@@ -170,7 +170,7 @@ public class ModBlocks {
 //        SKILLET = BLOCKS.register("skillet", () -> new SkilletBlock(Properties.of().mapColor(MapColor.METAL).strength(0.5F, 6.0F).sound(SoundType.LANTERN)));
 //        WOODEN_BASKET = BLOCKS.register("wooden_basket", () -> new BasketBlock(Properties.of().strength(1.5F).sound(SoundType.WOOD)));
 //        BAMBOO_BASKET = BLOCKS.register("bamboo_basket", () -> new BasketBlock(Properties.of().strength(1.5F).sound(SoundType.BAMBOO_WOOD)));
-//        CUTTING_BOARD = BLOCKS.register("cutting_board", () -> new CuttingBoardBlock(Properties.copy(Blocks.OAK_PLANKS).strength(2.0F).sound(SoundType.WOOD)));
+        CUTTING_BOARD = BLOCKS.register("cutting_board", () -> new CuttingBoardBlock(LegacyBlockProperties.copy(Material.wood).strength(2.0F).sound(Block.soundTypeWood))).blockStateMapper(LegacyDataStateMapper.builder().variant(0,"facing=north").variant(1,"facing=east").variant(2,"facing=south").variant(3,"facing=west").build());
 //        BASKET = BAMBOO_BASKET;
 //        CARROT_CRATE = BLOCKS.register("carrot_crate", () -> new Block(Properties.copy(Blocks.OAK_PLANKS).strength(2.0F, 3.0F).sound(SoundType.WOOD)));
 //        POTATO_CRATE = BLOCKS.register("potato_crate", () -> new Block(Properties.copy(Blocks.OAK_PLANKS).strength(2.0F, 3.0F).sound(SoundType.WOOD)));

@@ -4,6 +4,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import net.chaolux.delightlegacy.legacy.common.item.LegacyItemProperties;
 import net.chaolux.delightlegacy.legacy.common.item.LegacyToolAction;
+import net.chaolux.delightlegacy.registry.ModBlocks;
 import net.chaolux.delightlegacy.registry.ModMaterials;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -90,6 +91,11 @@ public class KnifeItem extends ItemSword implements LegacyToolAction {
             return false;
         }
         return super.getIsRepairable(itemStack,stack);
+    }
+
+    @Override
+    public boolean doesSneakBypassUse(World world,int x,int y,int z,EntityPlayer entityPlayer) {
+        return world.getBlock(x,y,z) == ModBlocks.CUTTING_BOARD.get();
     }
 
     public float getAttackDamage() {

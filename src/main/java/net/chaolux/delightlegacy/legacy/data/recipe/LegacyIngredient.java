@@ -80,6 +80,7 @@ public class LegacyIngredient {
         if(isOre) return parseOreValue(jsonObject);
         if(isTag) return new TagValue(LegacyRecipeJson.getString(jsonObject,"tag"));
         String string=LegacyRecipeJson.getString(jsonObject,"type");
+        if(!"farmersdelight:tool_action".equals(string) && !"delightlegacy:tool_action".equals(string)) throw new JsonSyntaxException("Invalid tool action: " + string);
         return new ToolActionValue(LegacyRecipeJson.getString(jsonObject,"action"));
     }
 
