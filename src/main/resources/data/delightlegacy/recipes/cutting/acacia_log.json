@@ -2,12 +2,15 @@
   "type": "farmersdelight:cutting",
   "ingredients": [
     {
-      "item": "minecraft:acacia_log"
+      "item": "minecraft:log2",
+      "data": 0
     }
   ],
   "result": [
     {
-      "item": "minecraft:stripped_acacia_log"
+      "count": 4,
+      "item": "minecraft:planks",
+      "data": 4
     },
     {
       "item": "farmersdelight:tree_bark"

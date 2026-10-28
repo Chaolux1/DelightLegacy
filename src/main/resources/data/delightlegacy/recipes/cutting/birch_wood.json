@@ -2,12 +2,15 @@
   "type": "farmersdelight:cutting",
   "ingredients": [
     {
-      "item": "minecraft:birch_wood"
+      "item": "minecraft:log",
+      "data": 14
     }
   ],
   "result": [
     {
-      "item": "minecraft:stripped_birch_wood"
+      "count": 4,
+      "item": "minecraft:planks",
+      "data": 2
     },
     {
       "item": "farmersdelight:tree_bark"

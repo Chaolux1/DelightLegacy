@@ -10,6 +10,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
@@ -129,20 +130,33 @@ public class LegacyModelRenderer {
         if(resourceLocationList.isEmpty()) return;
         Tessellator tessellator=Tessellator.instance;
         int index=0;
-        for(ResourceLocation resourceLocation : resourceLocationList) {
-            IIcon iIcon=LegacyModelManager.getInstance().getTexture().getIcon(resourceLocation);
-            int color=itemStack == null ? 0xFFFFFF : itemStack.getItem().getColorFromItemStack(itemStack,index);
-            float red=((color >> 16) & 255) / 255.0f;
-            float green=((color >> 8) & 255) / 255.0f;
-            float blue=(color & 255) / 255.0f;
-            GL11.glColor4f(red,green,blue,1.0f);
-            GL11.glPushMatrix();
-            GL11.glTranslatef(0.0f,0.0f,index * 0.001f);
-            ItemRenderer.renderItemIn2D(tessellator,iIcon.getMaxU(),iIcon.getMinV(),iIcon.getMinU(),iIcon.getMaxV(),iIcon.getIconWidth(),iIcon.getIconHeight(),0.0625f);
-            GL11.glPopMatrix();
-            index++;
+        GL11.glPushAttrib(GL11.GL_ENABLE_BIT | GL11.GL_COLOR_BUFFER_BIT);
+        try {
+            GL11.glEnable(GL11.GL_TEXTURE_2D);
+            GL11.glEnable(GL11.GL_ALPHA_TEST);
+            GL11.glAlphaFunc(GL11.GL_GREATER, 0.1f);
+            GL11.glEnable(GL11.GL_BLEND);
+            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            for (ResourceLocation resourceLocation : resourceLocationList) {
+                IIcon iIcon = LegacyModelManager.getInstance().getTexture().getIcon(resourceLocation);
+                if (iIcon == null) continue;
+                int color = itemStack == null ? 0xFFFFFF : itemStack.getItem().getColorFromItemStack(itemStack, index);
+                GL11.glColor4f(((color >> 16) & 255) / 255.0f, ((color >> 8) & 255) / 255.0f, (color & 255) / 255.0f, 1.0f);
+                GL11.glPushMatrix();
+                try {
+                    GL11.glTranslatef(0.0f, 0.0f, index * 0.001f);
+                    if (!renderGeneratedItem(tessellator, iIcon))
+                        ItemRenderer.renderItemIn2D(tessellator, iIcon.getMaxU(), iIcon.getMinV(), iIcon.getMinU(), iIcon.getMaxV(), iIcon.getIconWidth(), iIcon.getIconHeight(), 0.0625f);
+
+                } finally {
+                    GL11.glPopMatrix();
+                }
+                index++;
+            }
+        } finally {
+            GL11.glColor4f(1.0f,1.0f,1.0f,1.0f);
+            GL11.glPopAttrib();
         }
-        GL11.glColor4f(1.0f,1.0f,1.0f,1.0f);
     }
 
     private static void renderGeneratedHandheld(ItemStack itemStack,LegacyBakedModel legacyBakedModel) {
@@ -249,6 +263,77 @@ public class LegacyModelRenderer {
             if(z < 0.875f) return false;
         }
         return true;
+    }
+
+    private static boolean renderGeneratedItem(Tessellator tessellator,IIcon iIcon) {
+        if(!(iIcon instanceof TextureAtlasSprite)) return false;
+        TextureAtlasSprite textureAtlasSprite=(TextureAtlasSprite) iIcon;
+        int width=iIcon.getIconWidth();
+        int height=iIcon.getIconHeight();
+        if(width <= 0 || height <= 0 || width > 256 || height > 256 || textureAtlasSprite.getFrameCount() <= 0) return false;
+        int[][] value=textureAtlasSprite.getFrameTextureData(0);
+        if(value == null || value.length == 0 || value[0] == null || value[0].length < width * height) return false;
+        int[] values=value[0];
+        double maxU=iIcon.getMaxU();
+        double maxV=iIcon.getMaxV();
+        double minU=iIcon.getMinU();
+        double minV=iIcon.getMinV();
+        tessellator.startDrawingQuads();
+        tessellator.setNormal(0.0f,0.0f,1.0f);
+        tessellator.addVertexWithUV(0,0,0,maxU,maxV);
+        tessellator.addVertexWithUV(1,0,0,minU,maxV);
+        tessellator.addVertexWithUV(1,1,0,minU,minV);
+        tessellator.addVertexWithUV(0,1,0,maxU,minV);
+        tessellator.setNormal(0.0f,0.0f,-1.0f);
+        tessellator.addVertexWithUV(0,1,0.0625f,maxU,minV);
+        tessellator.addVertexWithUV(1,1,0.0625f,minU,minV);
+        tessellator.addVertexWithUV(1,0,0.0625f,minU,maxV);
+        tessellator.addVertexWithUV(0,0,0.0625f,maxU,maxV);
+        for(int y=0;y < height;y++) {
+            for (int x=0;x < width;x++) {
+                if(!itemGround(values,width,height,x,y)) continue;
+                double right=1 - (double)x /width;
+                double left=1 - (x + 1) / width;
+                double up=1 - (double)y / height;
+                double down=1-(y + 1) / height;
+                double u=iIcon.getInterpolatedU((x + 0.5) * 16 / width);
+                double v=iIcon.getInterpolatedV((y + 0.5) * 16 / height);
+                if(!itemGround(values,width,height,x - 1,y)) {
+                    tessellator.setNormal(1.0f,0.0f,0.0f);
+                    tessellator.addVertexWithUV(right,up,-0.0625f,u,v);
+                    tessellator.addVertexWithUV(right,up,0,u,v);
+                    tessellator.addVertexWithUV(right,down,0,u,v);
+                    tessellator.addVertexWithUV(right,down,-0.0625f,u,v);
+                }
+                if(!itemGround(values,width,height,x + 1,y)) {
+                    tessellator.setNormal(-1.0f,0.0f,0.0f);
+                    tessellator.addVertexWithUV(left,down,-0.0625f,u,v);
+                    tessellator.addVertexWithUV(left,down,0,u,v);
+                    tessellator.addVertexWithUV(left,up,0,u,v);
+                    tessellator.addVertexWithUV(left,up,-0.0625f,u,v);
+                }
+                if(!itemGround(values,width,height,x,y - 1)) {
+                    tessellator.setNormal(0.0f,1.0f,0.0f);
+                    tessellator.addVertexWithUV(left,up,-0.0625f,u,v);
+                    tessellator.addVertexWithUV(left,up,0,u,v);
+                    tessellator.addVertexWithUV(right,up,0,u,v);
+                    tessellator.addVertexWithUV(right,up,-0.0625f,u,v);
+                }
+                if(!itemGround(values,width,height,x,y + 1)) {
+                    tessellator.setNormal(0.0f,-1.0f,0.0f);
+                    tessellator.addVertexWithUV(right,down,-0.0625f,u,v);
+                    tessellator.addVertexWithUV(right,down,0,u,v);
+                    tessellator.addVertexWithUV(left,down,0,u,v);
+                    tessellator.addVertexWithUV(left,down,-0.0625f,u,v);
+                }
+            }
+        }
+        tessellator.draw();
+        return true;
+    }
+
+    private static boolean itemGround(int[] values,int width,int height,int x,int y) {
+        return x >= 0 && y >= 0 && x < width && y < height && (values[y * width + x] >>> 25) > 25;
     }
 
 }

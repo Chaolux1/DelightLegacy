@@ -2,12 +2,15 @@
   "type": "farmersdelight:cutting",
   "ingredients": [
     {
-      "item": "minecraft:jungle_wood"
+      "item": "minecraft:log",
+      "data": 15
     }
   ],
   "result": [
     {
-      "item": "minecraft:stripped_jungle_wood"
+      "count": 4,
+      "item": "minecraft:planks",
+      "data": 3
     },
     {
       "item": "farmersdelight:tree_bark"

@@ -2,7 +2,8 @@
   "type": "farmersdelight:cutting",
   "ingredients": [
     {
-      "item": "minecraft:cooked_salmon"
+      "item": "minecraft:cooked_fished",
+      "data": 1
     }
   ],
   "result": [
@@ -11,7 +12,8 @@
       "item": "farmersdelight:cooked_salmon_slice"
     },
     {
-      "item": "minecraft:bone_meal"
+      "item": "minecraft:dye",
+      "data": 15
     }
   ],
   "tool": [

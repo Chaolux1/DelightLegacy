@@ -2,7 +2,8 @@
   "type": "farmersdelight:cutting",
   "ingredients": [
     {
-      "item": "minecraft:cooked_cod"
+      "item": "minecraft:cooked_fished",
+      "data": 0
     }
   ],
   "result": [
@@ -11,7 +12,8 @@
       "item": "farmersdelight:cooked_cod_slice"
     },
     {
-      "item": "minecraft:bone_meal"
+      "item": "minecraft:dye",
+      "data": 15
     }
   ],
   "tool": [

@@ -51,7 +51,9 @@ final class LegacyBuildModels {
    }
 
    private static LegacyModelDefinition empty(ResourceLocation resourceLocation) {
-        return new LegacyModelDefinition(resourceLocation,null,Boolean.TRUE,null,new LinkedHashMap<String,String>(),new ArrayList<LegacyModelDefinition.Element>(),true,display(false),new ArrayList<LegacyModelDefinition.Override>(),false,false,null);
+        Map<String,LegacyModelDefinition.Transform> stringTransformMap=display(false);
+        stringTransformMap.put("ground",blockTransform().get("ground"));
+       return new LegacyModelDefinition(resourceLocation,null,Boolean.TRUE,null,new LinkedHashMap<String,String>(),new ArrayList<LegacyModelDefinition.Element>(),true,display(false),new ArrayList<LegacyModelDefinition.Override>(),false,false,null);
    }
 
    private static LegacyModelDefinition cube(ResourceLocation resourceLocation,String down,String up,String north,String south,String west,String east) {
@@ -64,7 +66,7 @@ final class LegacyBuildModels {
         faceMap.put(LegacyDirection.EAST,face(east,LegacyDirection.EAST));
         List<LegacyModelDefinition.Element> elementList=new ArrayList<LegacyModelDefinition.Element>();
         elementList.add(new LegacyModelDefinition.Element(new float[] {0.0f,0.0f,0.0f},new float[] {16.0f,16.0f,16.0f},null,true,faceMap));
-        return new LegacyModelDefinition(resourceLocation,null,Boolean.TRUE,null,new LinkedHashMap<String,String>(),elementList,true,new LinkedHashMap<String,LegacyModelDefinition.Transform>(),new ArrayList<LegacyModelDefinition.Override>(),false,false,null);
+        return new LegacyModelDefinition(resourceLocation,null,Boolean.TRUE,null,new LinkedHashMap<String,String>(),elementList,true,blockTransform(),new ArrayList<LegacyModelDefinition.Override>(),false,false,null);
    }
 
    private static LegacyModelDefinition cubeAll(ResourceLocation resourceLocation,String string) {
@@ -127,5 +129,12 @@ final class LegacyBuildModels {
 
     private static LegacyModelDefinition copy(LegacyModelDefinition legacyModelDefinition,Map<String,String> texture) {
         return new LegacyModelDefinition(legacyModelDefinition.getId(),legacyModelDefinition.getLocation(),legacyModelDefinition.getOcclusion(),legacyModelDefinition.getGUI(),texture,legacyModelDefinition.getElement(),legacyModelDefinition.isDefine(),legacyModelDefinition.getTransform(),legacyModelDefinition.getOverride(),legacyModelDefinition.isGenerated(),legacyModelDefinition.isHandheld(),legacyModelDefinition.getString());
+    }
+
+    private static Map<String,LegacyModelDefinition.Transform> blockTransform() {
+        Map<String,LegacyModelDefinition.Transform> stringTransformMap=new LinkedHashMap<String,LegacyModelDefinition.Transform>();
+        stringTransformMap.put("ground",transform(new float[] {0.0f,0.0f,0.0f},new float[] {0.0f,3.0f,0.0f},new float[] {0.25f,0.25f,0.25f}));
+        stringTransformMap.put("fixed",transform(new float[] {0.0f,0.0f,0.0f},new float[] {0.0f,0.0f,0.0f},new float[] {0.5f,0.5f,0.5f}));
+        return stringTransformMap;
     }
 }

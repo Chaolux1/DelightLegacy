@@ -2,13 +2,13 @@
   "type": "farmersdelight:cutting",
   "ingredients": [
     {
-      "item": "minecraft:melon"
+      "item": "minecraft:melon_block"
     }
   ],
   "result": [
     {
       "count": 9,
-      "item": "minecraft:melon_slice"
+      "item": "minecraft:melon"
     }
   ],
   "tool": [

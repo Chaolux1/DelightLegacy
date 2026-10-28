@@ -2,12 +2,15 @@
   "type": "farmersdelight:cutting",
   "ingredients": [
     {
-      "item": "minecraft:oak_log"
+      "item": "minecraft:log",
+      "data": 0
     }
   ],
   "result": [
     {
-      "item": "minecraft:stripped_oak_log"
+      "count": 4,
+      "item": "minecraft:planks",
+      "data": 0
     },
     {
       "item": "farmersdelight:tree_bark"

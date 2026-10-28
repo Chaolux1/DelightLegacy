@@ -2,13 +2,15 @@
   "type": "farmersdelight:cutting",
   "ingredients": [
     {
-      "item": "minecraft:oxeye_daisy"
+      "item": "minecraft:red_flower",
+      "data": 8
     }
   ],
   "result": [
     {
       "count": 2,
-      "item": "minecraft:light_gray_dye"
+      "item": "minecraft:dye",
+      "data": 7
     }
   ],
   "tool": [

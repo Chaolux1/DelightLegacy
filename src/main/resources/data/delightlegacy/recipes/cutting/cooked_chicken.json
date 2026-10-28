@@ -11,7 +11,8 @@
       "item": "farmersdelight:cooked_chicken_cuts"
     },
     {
-      "item": "minecraft:bone_meal"
+      "item": "minecraft:dye",
+      "data": 15
     }
   ],
   "tool": [

@@ -2,13 +2,15 @@
   "type": "farmersdelight:cutting",
   "ingredients": [
     {
-      "item": "minecraft:red_tulip"
+      "item": "minecraft:red_flower",
+      "data": 4
     }
   ],
   "result": [
     {
       "count": 2,
-      "item": "minecraft:red_dye"
+      "item": "minecraft:dye",
+      "data": 1
     }
   ],
   "tool": [

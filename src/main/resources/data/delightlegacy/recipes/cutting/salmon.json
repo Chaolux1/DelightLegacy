@@ -11,7 +11,8 @@
       "item": "farmersdelight:salmon_slice"
     },
     {
-      "item": "minecraft:bone_meal"
+      "item": "minecraft:dye",
+      "data": 15
     }
   ],
   "tool": [
