@@ -1,3 +1,8 @@
 {
-  "parent": "farmersdelight:block/stove"
+  "parent": "farmersdelight:block/stove",
+  "display": {
+    "gui": {
+      "rotation": [0,270,0]
+    }
+  }
 }

@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:campfire_cooking",
+  "category": "food",
+  "cookingtime": 600,
+  "experience": 0.35,
+  "ingredient": {
+    "item": "minecraft:fish",
+    "data": 1
+  },
+  "result": {
+    "item": "minecraft:cooked_fished",
+    "data": 1
+  }
+}

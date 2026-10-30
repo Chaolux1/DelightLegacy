@@ -6,8 +6,10 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import net.chaolux.delightlegacy.DelightLegacy;
 import net.chaolux.delightlegacy.client.renderer.CuttingBoardRenderer;
+import net.chaolux.delightlegacy.client.renderer.StoveRenderer;
 import net.chaolux.delightlegacy.common.CommonProxy;
 import net.chaolux.delightlegacy.common.block.entity.CuttingBoardBlockEntity;
+import net.chaolux.delightlegacy.common.block.entity.StoveBlockEntity;
 import net.chaolux.delightlegacy.legacy.assets.ClassPathResourceProvider;
 import net.chaolux.delightlegacy.legacy.assets.LegacyPackType;
 import net.chaolux.delightlegacy.legacy.assets.LegacyResources;
@@ -36,7 +38,7 @@ public class ClientProxy extends CommonProxy {
     public void init(FMLInitializationEvent fmlPreInitializationEvent) {
         super.init(fmlPreInitializationEvent);
         ClientRegistry.bindTileEntitySpecialRenderer(CuttingBoardBlockEntity.class,new CuttingBoardRenderer());
-
+        ClientRegistry.bindTileEntitySpecialRenderer(StoveBlockEntity.class,new StoveRenderer());
     }
 
     @Override

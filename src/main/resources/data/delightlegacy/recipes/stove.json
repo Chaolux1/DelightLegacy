@@ -3,10 +3,10 @@
   "category": "misc",
   "key": {
     "B": {
-      "item": "minecraft:bricks"
+      "item": "minecraft:brick_block"
     },
     "C": {
-      "item": "minecraft:campfire"
+      "item": "minecraft:furnace"
     },
     "i": {
       "tag": "forge:ingots/iron"

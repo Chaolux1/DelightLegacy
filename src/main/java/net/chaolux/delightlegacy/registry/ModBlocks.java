@@ -14,7 +14,7 @@ import net.minecraft.item.Item;
 public class ModBlocks {
 
     public static final LegacyBlockRegister<Block> BLOCKS;
-//    public static final RegistryObject<Block> STOVE;
+    public static final LegacyBlockRegistryObject<Block> STOVE;
 //    public static final RegistryObject<Block> COOKING_POT;
 //    public static final RegistryObject<Block> SKILLET;
 //    public static final RegistryObject<Block> WOODEN_BASKET;
@@ -165,7 +165,7 @@ public class ModBlocks {
 
     static {
         BLOCKS = new LegacyBlockRegister<Block>("delightlegacy",ModCreativeTabs.DELIGHT_LEGACY);
-//        STOVE = BLOCKS.register("stove", () -> new StoveBlock(Properties.copy(Blocks.BRICKS).lightLevel(litBlockEmission(13))));
+        STOVE = BLOCKS.register("stove", () -> new StoveBlock(LegacyBlockProperties.copy(Material.rock).strength(2.0f).sound(Block.soundTypeStone))).blockStateMapper(LegacyDataStateMapper.builder().variant(0,"facing=north,lit=false").variant(1,"facing=east,lit=false").variant(2,"facing=south,lit=false").variant(3,"facing=west,lit=false").variant(4,"facing=north,lit=true").variant(5,"facing=east,lit=true").variant(6,"facing=south,lit=true").variant(7,"facing=west,lit=true").build());
 //        COOKING_POT = BLOCKS.register("cooking_pot", () -> new CookingPotBlock(Properties.of().mapColor(MapColor.METAL).strength(0.5F, 6.0F).sound(SoundType.LANTERN)));
 //        SKILLET = BLOCKS.register("skillet", () -> new SkilletBlock(Properties.of().mapColor(MapColor.METAL).strength(0.5F, 6.0F).sound(SoundType.LANTERN)));
 //        WOODEN_BASKET = BLOCKS.register("wooden_basket", () -> new BasketBlock(Properties.of().strength(1.5F).sound(SoundType.WOOD)));
