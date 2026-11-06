@@ -6,6 +6,7 @@ import net.chaolux.delightlegacy.DelightLegacy;
 import net.chaolux.delightlegacy.common.block.entity.CookingPotBlockEntity;
 import net.chaolux.delightlegacy.common.block.entity.HeatableBlockEntity;
 import net.chaolux.delightlegacy.common.block.entity.state.CookingPotSupport;
+import net.chaolux.delightlegacy.legacy.assets.blockstates.LegacyDataStateMapper;
 import net.chaolux.delightlegacy.legacy.assets.models.LegacyModelManager;
 import net.chaolux.delightlegacy.legacy.assets.models.LegacyModelRenderID;
 import net.chaolux.delightlegacy.legacy.common.block.LegacyBlockProperties;
@@ -25,6 +26,7 @@ import java.util.Random;
 
 public class CookingPotBlock extends BlockContainer {
     public static final int FACING=3;
+    public static final LegacyDataStateMapper STATE_MAPPER=variant();
     public CookingPotBlock(LegacyBlockProperties legacyBlockProperties) {
         super(legacyBlockProperties.getMaterial());
         legacyBlockProperties.from(this);
@@ -55,14 +57,6 @@ public class CookingPotBlock extends BlockContainer {
     @SideOnly(Side.CLIENT)
     public IIcon getIcon(int side, int data) {
         return LegacyModelManager.getInstance().getParticle(this,data);
-    }
-
-    public static CookingPotSupport getCookingPotSupport(int value) {
-        return CookingPotSupport.from(value);
-    }
-
-    public static CookingPotSupport getTrayState(World world,int x,int y,int z) {
-        return HeatableBlockEntity.isTrayHeatSource(world,x,y - 1,z) ? CookingPotSupport.TRAY : CookingPotSupport.NONE;
     }
 
     @Override
@@ -153,13 +147,6 @@ public class CookingPotBlock extends BlockContainer {
         super.breakBlock(world,x,y,z,block,value);
     }
 
-    private static void dropItem(World world,int x,int y,int z,ItemStack itemStack) {
-        if(itemStack == null || itemStack.stackSize <= 0) return;
-        EntityItem entityItem=new EntityItem(world,x + 0.5,y + 0.5,z + 0.5,itemStack);
-        entityItem.delayBeforeCanPickup=10;
-        world.spawnEntityInWorld(entityItem);
-    }
-
     @Override
     public int quantityDropped(Random random) {
         return 0;
@@ -187,5 +174,31 @@ public class CookingPotBlock extends BlockContainer {
             boolean value=((CookingPotBlockEntity)tileEntity).getStackInSlot(CookingPotBlockEntity.MEAL_DISPLAY_SLOT) != null;
             world.playSound(x + 0.5,y + 0.5,z + 0.5,"delightlegacy:block.cooking_pot." + (value ? "boil_soup" : "boil"),0.5f,0.9f + random.nextFloat() * 0.2f,false);
         }
+    }
+
+    public static CookingPotSupport getCookingPotSupport(int value) {
+        return CookingPotSupport.from(value);
+    }
+
+    public static CookingPotSupport getTrayState(World world,int x,int y,int z) {
+        return HeatableBlockEntity.isTrayHeatSource(world,x,y - 1,z) ? CookingPotSupport.TRAY : CookingPotSupport.NONE;
+    }
+
+    private static void dropItem(World world,int x,int y,int z,ItemStack itemStack) {
+        if(itemStack == null || itemStack.stackSize <= 0) return;
+        EntityItem entityItem=new EntityItem(world,x + 0.5,y + 0.5,z + 0.5,itemStack);
+        entityItem.delayBeforeCanPickup=10;
+        world.spawnEntityInWorld(entityItem);
+    }
+
+    private static LegacyDataStateMapper variant() {
+        LegacyDataStateMapper.Builder builder=LegacyDataStateMapper.builder();
+        String[] strings={"north","east","south","west"};
+        String[] support={"none","tray","handle"};
+        for (int index=0;index < 12;index++) {
+            builder.put(index,"facing",strings[index & FACING]);
+            builder.put(index,"support",support[index >> 2]);
+        }
+        return builder.build();
     }
 }

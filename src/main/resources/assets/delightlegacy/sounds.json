@@ -3,7 +3,7 @@
     "sounds": [
       {
         "type": "event",
-        "name": "block.barrel.close"
+        "name": "block.random.chestclosed"
       }
     ],
     "subtitle": "subtitles.farmersdelight.block.cabinet.close"
@@ -12,7 +12,7 @@
     "sounds": [
       {
         "type": "event",
-        "name": "block.barrel.open"
+        "name": "block.random.chestopen"
       }
     ],
     "subtitle": "subtitles.farmersdelight.block.cabinet.open"
@@ -121,7 +121,7 @@
     "sounds": [
       {
         "type": "event",
-        "name": "block.campfire.crackle"
+        "name": "block.fire.fire"
       }
     ],
     "subtitle": "subtitles.farmersdelight.block.stove.crackle"

@@ -1,13 +1,19 @@
 package net.chaolux.delightlegacy.client.gui;
 
+import net.chaolux.delightlegacy.common.block.entity.CookingPotBlockEntity;
 import net.chaolux.delightlegacy.common.block.entity.container.CookingPotMenu;
 import net.chaolux.delightlegacy.legacy.assets.ResourceLocations;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import org.lwjgl.opengl.GL11;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class CookingPotScreen extends GuiContainer {
     private static final ResourceLocation BACKGROUND_TEXTURE=new ResourceLocation("delightlegacy","textures/gui/cooking_pot.png");
@@ -40,5 +46,21 @@ public class CookingPotScreen extends GuiContainer {
         if(cookingPotMenu.getCookingPotBlockEntity().isHeated()) drawTexturedModalRect(guiLeft + 47,guiTop + 55,176,0,17,15);
         int data=cookingPotMenu.getCookTime(24);
         if(data > 0) drawTexturedModalRect(guiLeft + 89,guiTop + 25,176,15,data + 1,17);
+    }
+
+    @Override
+    protected void renderToolTip(ItemStack itemStack,int x,int y) {
+        Slot slot=cookingPotMenu.getSlot(CookingPotBlockEntity.MEAL_DISPLAY_SLOT);
+        int mouseX=x-guiLeft;
+        int mouseY=y-guiTop;
+        if(slot.getHasStack() && slot.getStack() == itemStack && mouseX >= slot.xDisplayPosition && mouseX < slot.xDisplayPosition + 16 && mouseY >= slot.yDisplayPosition && mouseY < slot.yDisplayPosition + 16) {
+            List<String> stringList=new ArrayList<String>();
+            stringList.add(itemStack.getRarity().rarityColor + itemStack.getDisplayName());
+            ItemStack stack=cookingPotMenu.getCookingPotBlockEntity().getContainer();
+            if(stack != null && stack.stackSize > 0) stringList.add(EnumChatFormatting.GRAY + StatCollector.translateToLocalFormatted("container.delightlegacy.cooking_pot.served_on",stack.getDisplayName()));
+            drawHoveringText(stringList,x,y,fontRendererObj);
+            return;
+        }
+        super.renderToolTip(itemStack,x,y);
     }
 }

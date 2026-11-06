@@ -66,7 +66,10 @@ final class LegacyBuildModels {
         faceMap.put(LegacyDirection.EAST,face(east,LegacyDirection.EAST));
         List<LegacyModelDefinition.Element> elementList=new ArrayList<LegacyModelDefinition.Element>();
         elementList.add(new LegacyModelDefinition.Element(new float[] {0.0f,0.0f,0.0f},new float[] {16.0f,16.0f,16.0f},null,true,faceMap));
-        return new LegacyModelDefinition(resourceLocation,null,Boolean.TRUE,null,new LinkedHashMap<String,String>(),elementList,true,blockTransform(),new ArrayList<LegacyModelDefinition.Override>(),false,false,null);
+        Map<String,LegacyModelDefinition.Transform> stringTransformMap=blockTransform();
+        String string=ResourceLocations.path(resourceLocation);
+        if("block/orientable".equals(string) || "block/orientable_with_bottom".equals(string)) stringTransformMap.put("gui",transform(new float[] {0.0f,270.0f,0.0f},new float[] {0.0f,0.0f,0.0f},new float[] {1.0f,1.0f,1.0f}));
+        return new LegacyModelDefinition(resourceLocation,null,Boolean.TRUE,null,new LinkedHashMap<String,String>(),elementList,true,stringTransformMap,new ArrayList<LegacyModelDefinition.Override>(),false,false,null);
    }
 
    private static LegacyModelDefinition cubeAll(ResourceLocation resourceLocation,String string) {

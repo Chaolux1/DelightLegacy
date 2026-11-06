@@ -79,13 +79,160 @@ public class CookingPotBlockEntity extends SyncedBlockEntity implements ISidedIn
         if(value) inventoryChanged();
     }
 
-    public boolean isHeated() {
-        return worldObj != null && isHeated(worldObj,xCoord,yCoord,zCoord);
+    @Override
+    public String getInventoryName() {
+        return hasCustomInventoryName() ? customName : "container.delightlegacy.cooking_pot";
+    }
+
+    @Override
+    public boolean hasCustomInventoryName() {
+        return customName != null && !customName.isEmpty();
+    }
+
+    @Override
+    public int getInventoryStackLimit() {
+        return 64;
+    }
+
+    @Override
+    public boolean isUseableByPlayer(EntityPlayer entityPlayer) {
+        return worldObj != null && worldObj.getTileEntity(xCoord,yCoord,zCoord) == this && entityPlayer.getDistanceSq(xCoord + 0.5,yCoord + 0.5,zCoord + 0.5) <= 64;
+    }
+
+    @Override
+    public void openInventory() {
+
+    }
+
+    @Override
+    public void closeInventory() {
+
+    }
+
+    @Override
+    public boolean isItemValidForSlot(int value,ItemStack itemStack) {
+        if(itemStack == null || itemStack.stackSize <= 0) return false;
+        if(value >= 0 && value <= 5) return true;
+        if(value == CONTAINER_SLOT) return isContainer(itemStack);
+        return false;
+    }
+
+
+    @Override
+    public int[] getAccessibleSlotsFromSide(int value) {
+        if(value == 1) return INPUT_INVENTORY.clone();
+        return OUTPUT_INVENTORY.clone();
+    }
+
+    @Override
+    public boolean canInsertItem(int value,ItemStack itemStack,int data) {
+        return (data == 1 ? value >= 0 && value <= 5 : value == CONTAINER_SLOT) && isItemValidForSlot(value,itemStack);
+    }
+
+    @Override
+    public boolean canExtractItem(int value,ItemStack itemStack,int data) {
+        return (data != 1 && value == OUTPUT_SLOT) || (data == 1 && value >= 0 && value <= 5);
     }
 
     @Override
     public boolean requiresDirectHeat() {
         return false;
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound nbtTagCompound) {
+        super.readFromNBT(nbtTagCompound);
+        for (int index=0;index < INVENTORY_SIZE;index++) {
+            inventory[index]=null;
+        }
+        NBTTagList nbtTagList=nbtTagCompound.getTagList("Inventory",10);
+        for (int value=0;value < nbtTagList.tagCount();value++) {
+            NBTTagCompound tagCompound=nbtTagList.getCompoundTagAt(value);
+            int data=tagCompound.getByte("Slot") & 255;
+            if(data >= INVENTORY_SIZE) continue;
+            ItemStack itemStack=ItemStack.loadItemStackFromNBT(tagCompound);
+            if(itemStack != null && itemStack.stackSize > 0) inventory[data]=itemStack;
+        }
+        mealContainerStack=nbtTagCompound.hasKey("Container",10) ? ItemStack.loadItemStackFromNBT(nbtTagCompound.getCompoundTag("Container")) : null;
+        cookTime=Math.max(0,nbtTagCompound.getInteger("CookTime"));
+        cookTimeTotal=Math.max(0,nbtTagCompound.getInteger("CookTimeTotal"));
+        customName=nbtTagCompound.hasKey("CustomName",8) ? nbtTagCompound.getString("CustomName") : null;
+        usedRecipeTracker.clear();
+        NBTTagCompound tagCompound=nbtTagCompound.getCompoundTag("UsedRecipes");
+        for(Object object : tagCompound.func_150296_c()) {
+            String string=(String)object;
+            ResourceLocation resourceLocation=ResourceLocations.tryParse(string);
+            if(resourceLocation != null && tagCompound.getInteger(string) > 0) usedRecipeTracker.put(resourceLocation,tagCompound.getInteger(string));
+        }
+        lastRecipeID=null;
+        checkNewRecipe=true;
+    }
+
+    @Override
+    public void writeToNBT(NBTTagCompound nbtTagCompound) {
+        super.writeToNBT(nbtTagCompound);
+        NBTTagList nbtTagList=new NBTTagList();
+        for(int index=0;index < INVENTORY_SIZE;index++) {
+            ItemStack itemStack=inventory[index];
+            if(itemStack == null) continue;
+            NBTTagCompound tagCompound=itemStack.writeToNBT(new NBTTagCompound());
+            tagCompound.setByte("Slot",(byte)index);
+            nbtTagList.appendTag(tagCompound);
+        }
+        nbtTagCompound.setTag("Inventory",nbtTagList);
+        if(mealContainerStack != null) nbtTagCompound.setTag("Container",mealContainerStack.writeToNBT(new NBTTagCompound()));
+        nbtTagCompound.setInteger("CookTime",cookTime);
+        nbtTagCompound.setInteger("CookTimeTotal",cookTimeTotal);
+        if(customName != null) nbtTagCompound.setString("CustomName",customName);
+        NBTTagCompound tagCompound=new NBTTagCompound();
+        for(Map.Entry<ResourceLocation,Integer> resourceLocationIntegerEntry : usedRecipeTracker.entrySet()) tagCompound.setInteger(ResourceLocations.getString(resourceLocationIntegerEntry.getKey()),resourceLocationIntegerEntry.getValue());
+        nbtTagCompound.setTag("UsedRecipes",tagCompound);
+    }
+
+    @Override
+    public int getSizeInventory() {
+        return INVENTORY_SIZE;
+    }
+
+    @Override
+    public ItemStack getStackInSlot(int value) {
+        return value >= 0 && value < INVENTORY_SIZE ? inventory[value] : null;
+    }
+
+    @Override
+    public ItemStack decrStackSize(int value,int data) {
+        if(value < 0 || value >= INVENTORY_SIZE || data <= 0 || inventory[value] == null) return null;
+        ItemStack itemStack;
+        if(inventory[value].stackSize <= data) {
+            itemStack=inventory[value];
+            inventory[value]=null;
+        } else {
+            itemStack=inventory[value].splitStack(data);
+            if(inventory[value].stackSize <= 0 ) inventory[value]=null;
+        }
+        if(value == MEAL_DISPLAY_SLOT && inventory[value] == null) mealContainerStack=null;
+        if(value >= 0 && value < MEAL_DISPLAY_SLOT) checkNewRecipe=true;
+        inventoryChanged();
+        return itemStack;
+    }
+
+    @Override
+    public ItemStack getStackInSlotOnClosing(int value) {
+        return null;
+    }
+
+    @Override
+    public void setInventorySlotContents(int value,ItemStack itemStack) {
+        if(value < 0 || value >= INVENTORY_SIZE) return;
+        inventory[value]=itemStack;
+        if(itemStack != null) itemStack.stackSize=Math.min(itemStack.stackSize,value == MEAL_DISPLAY_SLOT ? 64 : Math.min(getInventoryStackLimit(),itemStack.getMaxStackSize()));
+        if(value == MEAL_DISPLAY_SLOT && itemStack == null) mealContainerStack=null;
+        if(value >= 0 && value < MEAL_DISPLAY_SLOT) checkNewRecipe=true;
+        inventoryChanged();
+    }
+
+    public boolean isHeated() {
+        return worldObj != null && isHeated(worldObj,xCoord,yCoord,zCoord);
     }
 
     public ItemStack getMealContainerStack() {
@@ -386,155 +533,8 @@ public class CookingPotBlockEntity extends SyncedBlockEntity implements ISidedIn
         usedRecipeTracker.put(resourceLocation,integer == null ? 1 : integer + 1);
     }
 
-    @Override
-    public void readFromNBT(NBTTagCompound nbtTagCompound) {
-        super.readFromNBT(nbtTagCompound);
-        for (int index=0;index < INVENTORY_SIZE;index++) {
-            inventory[index]=null;
-        }
-        NBTTagList nbtTagList=nbtTagCompound.getTagList("Inventory",10);
-        for (int value=0;value < nbtTagList.tagCount();value++) {
-            NBTTagCompound tagCompound=nbtTagList.getCompoundTagAt(value);
-            int data=tagCompound.getByte("Slot") & 255;
-            if(data >= INVENTORY_SIZE) continue;
-            ItemStack itemStack=ItemStack.loadItemStackFromNBT(tagCompound);
-            if(itemStack != null && itemStack.stackSize > 0) inventory[data]=itemStack;
-        }
-        mealContainerStack=nbtTagCompound.hasKey("Container",10) ? ItemStack.loadItemStackFromNBT(nbtTagCompound.getCompoundTag("Container")) : null;
-        cookTime=Math.max(0,nbtTagCompound.getInteger("CookTime"));
-        cookTimeTotal=Math.max(0,nbtTagCompound.getInteger("CookTimeTotal"));
-        customName=nbtTagCompound.hasKey("CustomName",8) ? nbtTagCompound.getString("CustomName") : null;
-        usedRecipeTracker.clear();
-        NBTTagCompound tagCompound=nbtTagCompound.getCompoundTag("UsedRecipes");
-        for(Object object : tagCompound.func_150296_c()) {
-            String string=(String)object;
-            ResourceLocation resourceLocation=ResourceLocations.tryParse(string);
-            if(resourceLocation != null && tagCompound.getInteger(string) > 0) usedRecipeTracker.put(resourceLocation,tagCompound.getInteger(string));
-        }
-        lastRecipeID=null;
-        checkNewRecipe=true;
-    }
-
-    @Override
-    public void writeToNBT(NBTTagCompound nbtTagCompound) {
-        super.writeToNBT(nbtTagCompound);
-        NBTTagList nbtTagList=new NBTTagList();
-        for(int index=0;index < INVENTORY_SIZE;index++) {
-            ItemStack itemStack=inventory[index];
-            if(itemStack == null) continue;
-            NBTTagCompound tagCompound=itemStack.writeToNBT(new NBTTagCompound());
-            tagCompound.setByte("Slot",(byte)index);
-            nbtTagList.appendTag(tagCompound);
-        }
-        nbtTagCompound.setTag("Inventory",nbtTagList);
-        if(mealContainerStack != null) nbtTagCompound.setTag("Container",mealContainerStack.writeToNBT(new NBTTagCompound()));
-        nbtTagCompound.setInteger("CookTime",cookTime);
-        nbtTagCompound.setInteger("CookTimeTotal",cookTimeTotal);
-        if(customName != null) nbtTagCompound.setString("CustomName",customName);
-        NBTTagCompound tagCompound=new NBTTagCompound();
-        for(Map.Entry<ResourceLocation,Integer> resourceLocationIntegerEntry : usedRecipeTracker.entrySet()) tagCompound.setInteger(ResourceLocations.getString(resourceLocationIntegerEntry.getKey()),resourceLocationIntegerEntry.getValue());
-        nbtTagCompound.setTag("UsedRecipes",tagCompound);
-    }
-
-    @Override
-    public int getSizeInventory() {
-        return INVENTORY_SIZE;
-    }
-
-    @Override
-    public ItemStack getStackInSlot(int value) {
-        return value >= 0 && value < INVENTORY_SIZE ? inventory[value] : null;
-    }
-
-    @Override
-    public ItemStack decrStackSize(int value,int data) {
-        if(value < 0 || value >= INVENTORY_SIZE || data <= 0 || inventory[value] == null) return null;
-        ItemStack itemStack;
-        if(inventory[value].stackSize <= data) {
-            itemStack=inventory[value];
-            inventory[value]=null;
-        } else {
-            itemStack=inventory[value].splitStack(data);
-            if(inventory[value].stackSize <= 0 ) inventory[value]=null;
-        }
-        if(value == MEAL_DISPLAY_SLOT && inventory[value] == null) mealContainerStack=null;
-        if(value >= 0 && value < MEAL_DISPLAY_SLOT) checkNewRecipe=true;
-        inventoryChanged();
-        return itemStack;
-    }
-
-    @Override
-    public ItemStack getStackInSlotOnClosing(int value) {
-        return null;
-    }
-
-    @Override
-    public void setInventorySlotContents(int value,ItemStack itemStack) {
-        if(value < 0 || value >= INVENTORY_SIZE) return;
-        inventory[value]=itemStack;
-        if(itemStack != null) itemStack.stackSize=Math.min(itemStack.stackSize,value == MEAL_DISPLAY_SLOT ? 64 : Math.min(getInventoryStackLimit(),itemStack.getMaxStackSize()));
-        if(value == MEAL_DISPLAY_SLOT && itemStack == null) mealContainerStack=null;
-        if(value >= 0 && value < MEAL_DISPLAY_SLOT) checkNewRecipe=true;
-        inventoryChanged();
-    }
-
     public void setCustomName(String string) {
         customName=string == null || string.isEmpty() ? null : string;
         inventoryChanged();
-    }
-
-    @Override
-    public String getInventoryName() {
-        return hasCustomInventoryName() ? customName : "container.delightlegacy.cooking_pot";
-    }
-
-    @Override
-    public boolean hasCustomInventoryName() {
-        return customName != null && !customName.isEmpty();
-    }
-
-    @Override
-    public int getInventoryStackLimit() {
-        return 64;
-    }
-
-    @Override
-    public boolean isUseableByPlayer(EntityPlayer entityPlayer) {
-        return worldObj != null && worldObj.getTileEntity(xCoord,yCoord,zCoord) == this && entityPlayer.getDistanceSq(xCoord + 0.5,yCoord + 0.5,zCoord + 0.5) <= 64;
-    }
-
-    @Override
-    public void openInventory() {
-
-    }
-
-    @Override
-    public void closeInventory() {
-
-    }
-
-    @Override
-    public boolean isItemValidForSlot(int value,ItemStack itemStack) {
-        if(itemStack == null || itemStack.stackSize <= 0) return false;
-        if(value >= 0 && value <= 5) return true;
-        if(value == CONTAINER_SLOT) return isContainer(itemStack);
-        return false;
-    }
-
-
-    @Override
-    public int[] getAccessibleSlotsFromSide(int value) {
-        if(value == 1) return INPUT_INVENTORY.clone();
-        return OUTPUT_INVENTORY.clone();
-    }
-
-    @Override
-    public boolean canInsertItem(int value,ItemStack itemStack,int data) {
-        return (data == 1 ? value >= 0 && value <= 5 : value == CONTAINER_SLOT) && isItemValidForSlot(value,itemStack);
-    }
-
-    @Override
-    public boolean canExtractItem(int value,ItemStack itemStack,int data) {
-        return (data != 1 && value == OUTPUT_SLOT) || (data == 1 && value >= 0 && value <= 5);
     }
 }

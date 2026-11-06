@@ -22,7 +22,7 @@ import net.minecraft.util.ResourceLocation;
 import java.util.List;
 import java.util.Optional;
 
-public class CuttingBoardBlockEntity extends TileEntity implements ISidedInventory {
+public class CuttingBoardBlockEntity extends SyncedBlockEntity implements ISidedInventory {
     private static final int[] SLOT={0};
     private ItemStack itemStack;
     private boolean value;
@@ -60,7 +60,7 @@ public class CuttingBoardBlockEntity extends TileEntity implements ISidedInvento
         ItemStack item=stack.copy();
         item.stackSize -= dataValue;
         resourceLocation=null;
-        set();
+        inventoryChanged();
         return item.stackSize > 0 ? item : null;
     }
 
@@ -70,7 +70,7 @@ public class CuttingBoardBlockEntity extends TileEntity implements ISidedInvento
         itemStack=null;
         value=false;
         resourceLocation=null;
-        set();
+        inventoryChanged();
         return stack;
     }
 
@@ -85,7 +85,7 @@ public class CuttingBoardBlockEntity extends TileEntity implements ISidedInvento
         itemStack=stack.copy();
         value=true;
         resourceLocation=null;
-        set();
+        inventoryChanged();
         return true;
     }
 
@@ -153,14 +153,6 @@ public class CuttingBoardBlockEntity extends TileEntity implements ISidedInvento
         worldObj.spawnEntityInWorld(entityItem);
     }
 
-    private void set() {
-        markDirty();
-        if(worldObj != null) {
-            worldObj.markBlockForUpdate(xCoord,yCoord,zCoord);
-            worldObj.func_147453_f(xCoord,yCoord,zCoord,getBlockType());
-        }
-    }
-
     @Override
     public int getSizeInventory() {
         return 1;
@@ -177,7 +169,7 @@ public class CuttingBoardBlockEntity extends TileEntity implements ISidedInvento
         if(metadata >= itemStack.stackSize) return removeItem();
         ItemStack stack=itemStack.splitStack(metadata);
         resourceLocation=null;
-        set();
+        inventoryChanged();
         return stack;
     }
 
@@ -193,7 +185,7 @@ public class CuttingBoardBlockEntity extends TileEntity implements ISidedInvento
         if(itemStack != null) itemStack.stackSize=Math.min(itemStack.stackSize,Math.min(64,itemStack.getMaxStackSize()));
         value=false;
         resourceLocation=null;
-        set();
+        inventoryChanged();
     }
 
     @Override
@@ -264,21 +256,5 @@ public class CuttingBoardBlockEntity extends TileEntity implements ISidedInvento
         nbtTagCompound.setBoolean("ItemValue",value);
         if(!isEmpty()) nbtTagCompound.setTag("ItemStack",itemStack.writeToNBT(new NBTTagCompound()));
     }
-
-    @Override
-    public Packet getDescriptionPacket() {
-        NBTTagCompound nbtTagCompound=new NBTTagCompound();
-        writeToNBT(nbtTagCompound);
-        return new S35PacketUpdateTileEntity(xCoord,yCoord,zCoord,1,nbtTagCompound);
-    }
-
-    @Override
-    public void onDataPacket(NetworkManager networkManager,S35PacketUpdateTileEntity s35PacketUpdateTileEntity) {
-        readFromNBT(s35PacketUpdateTileEntity.func_148857_g());
-        if(worldObj != null) worldObj.markBlockForUpdate(xCoord,yCoord,zCoord);
-    }
-
-
-
 
 }

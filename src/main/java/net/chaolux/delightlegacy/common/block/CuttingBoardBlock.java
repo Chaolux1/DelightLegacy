@@ -3,6 +3,7 @@ package net.chaolux.delightlegacy.common.block;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.chaolux.delightlegacy.common.block.entity.CuttingBoardBlockEntity;
+import net.chaolux.delightlegacy.legacy.assets.blockstates.LegacyDataStateMapper;
 import net.chaolux.delightlegacy.legacy.assets.models.LegacyModelManager;
 import net.chaolux.delightlegacy.legacy.assets.models.LegacyModelRenderID;
 import net.chaolux.delightlegacy.legacy.common.block.LegacyBlockProperties;
@@ -18,6 +19,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class CuttingBoardBlock extends BlockContainer {
+    public static final LegacyDataStateMapper STATE_MAPPER=variant();
     public CuttingBoardBlock(LegacyBlockProperties legacyBlockProperties) {
         super(legacyBlockProperties.getMaterial());
         legacyBlockProperties.from(this);
@@ -137,5 +139,14 @@ public class CuttingBoardBlock extends BlockContainer {
         if(itemStack == null) return 0;
         int data=Math.min(64,itemStack.getMaxStackSize());
         return MathHelper.floor_double((float)itemStack.stackSize / Math.max(1,data) * 14.0f) + 1;
+    }
+
+    private static LegacyDataStateMapper variant() {
+        LegacyDataStateMapper.Builder builder=LegacyDataStateMapper.builder();
+        String[] strings={"north","east","south","west"};
+        for (int index=0;index < 4;index++) {
+            builder.put(index,"facing",strings[index]);
+        }
+        return builder.build();
     }
 }

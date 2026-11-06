@@ -220,8 +220,8 @@ public class LegacyModelRenderer {
         }
         for (int index=0;index < yRotate;index++) {
             float indexX=x;
-            x=z;
-            z=-indexX;
+            x=-z;
+            z=indexX;
         }
         return new float[] {x + 0.5f,y + 0.5f,z + 0.5f};
     }

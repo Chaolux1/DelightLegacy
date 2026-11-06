@@ -48,8 +48,8 @@ public enum LegacyDirection {
         }
         for (int index=0;index < normalizeY;index++) {
             int currentX=x;
-            x=z;
-            z=-currentX;
+            x=-z;
+            z=currentX;
         }
         return from(x,y,z);
     }

@@ -50,7 +50,7 @@ public abstract class AbstractStoveBlock extends BlockContainer {
 
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack) {
-        int value=(MathHelper.floor_double(entityLivingBase.rotationYaw * 4.0f / 360.0f + 0.5) + 2) & FACING;
+        int value=(MathHelper.floor_double(entityLivingBase.rotationYaw * 4.0f / 360.0f + 0.5)) & FACING;
         world.setBlockMetadataWithNotify(x,y,z,value | LIT,3);
         world.func_147451_t(x,y,z);
     }
@@ -136,7 +136,7 @@ public abstract class AbstractStoveBlock extends BlockContainer {
         double mouseZ=z + 0.5 + (value == 2 ? 0.52 : value == 0 ? -0.52 : data);
         world.spawnParticle("smoke",mouseX,mouseY,mouseZ,0,0,0);
         world.spawnParticle("flame",mouseX,mouseY,mouseZ,0,0,0);
-        if(random.nextInt(10) == 0) world.playSound(mouseX,mouseY,mouseZ,"fire.fire",0.7f,1.0f,false);
+        if(random.nextInt(10) == 0) world.playSound(mouseX,mouseY,mouseZ,"delightlegacy:block.stove.crackle",0.7f,1.0f,false);
 
     }
 

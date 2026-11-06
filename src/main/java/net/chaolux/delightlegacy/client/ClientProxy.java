@@ -9,6 +9,7 @@ import net.chaolux.delightlegacy.client.gui.CookingPotScreen;
 import net.chaolux.delightlegacy.client.renderer.CuttingBoardRenderer;
 import net.chaolux.delightlegacy.client.renderer.StoveRenderer;
 import net.chaolux.delightlegacy.common.CommonProxy;
+import net.chaolux.delightlegacy.common.block.entity.CabinetBlockEntity;
 import net.chaolux.delightlegacy.common.block.entity.CookingPotBlockEntity;
 import net.chaolux.delightlegacy.common.block.entity.CuttingBoardBlockEntity;
 import net.chaolux.delightlegacy.common.block.entity.StoveBlockEntity;
@@ -22,6 +23,7 @@ import net.chaolux.delightlegacy.legacy.assets.models.LegacyModelRegistry;
 import net.chaolux.delightlegacy.legacy.assets.textures.LegacyResourceProvider;
 import net.chaolux.delightlegacy.registry.ModClientModels;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.entity.player.EntityPlayer;
@@ -54,8 +56,9 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public Object getClientGuiElement(int value, EntityPlayer entityPlayer, World world,int x,int y,int z) {
-        if(value != 0) return null;
+        if(value != 0 && value != 1) return null;
         TileEntity tileEntity=world.getTileEntity(x,y,z);
+        if(value == 1) return tileEntity instanceof CabinetBlockEntity ? new GuiChest(entityPlayer.inventory,(CabinetBlockEntity)tileEntity) : null;
         if(!(tileEntity instanceof CookingPotBlockEntity)) return null;
         return new CookingPotScreen(new CookingPotMenu(entityPlayer.inventory,(CookingPotBlockEntity)tileEntity));
     }
