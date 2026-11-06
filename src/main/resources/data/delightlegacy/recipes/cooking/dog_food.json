@@ -7,7 +7,8 @@
       "item": "minecraft:rotten_flesh"
     },
     {
-      "item": "minecraft:bone_meal"
+      "item": "minecraft:dye",
+      "data": 15
     },
     {
       "tag": "forge:raw_meat"

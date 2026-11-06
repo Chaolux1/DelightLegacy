@@ -6,7 +6,7 @@
       "item": "minecraft:wooden_shovel"
     },
     "W": {
-      "tag": "forge:buckets/water"
+      "item": "minecraft:water_bucket"
     },
     "b": {
       "item": "minecraft:brick"

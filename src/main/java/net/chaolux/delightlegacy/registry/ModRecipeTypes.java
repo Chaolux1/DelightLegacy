@@ -1,5 +1,6 @@
 package net.chaolux.delightlegacy.registry;
 
+import net.chaolux.delightlegacy.common.crafting.CookingPotRecipe;
 import net.chaolux.delightlegacy.common.crafting.CuttingBoardRecipe;
 import net.chaolux.delightlegacy.legacy.assets.ResourceLocations;
 import net.chaolux.delightlegacy.legacy.data.recipe.CampfireCookingRecipe;
@@ -11,10 +12,12 @@ public class ModRecipeTypes {
     public static LegacyRecipeType<LegacyCraftingRecipe> CRAFTING;
     public static LegacyRecipeType<CuttingBoardRecipe> CUTTING;
     public static LegacyRecipeType<CampfireCookingRecipe> CAMPFIRE_COOKING;
+    public static LegacyRecipeType<CookingPotRecipe> COOKING;
 
     public static void resister() {
         CRAFTING=LegacyRecipeRegistry.registerType(ResourceLocations.locations("crafting"));
         CUTTING= LegacyRecipeRegistry.registerType(ResourceLocations.resourceLocations("cutting"));
         CAMPFIRE_COOKING=LegacyRecipeRegistry.registerType(ResourceLocations.locations("campfire_cooking"));
+        COOKING=LegacyRecipeRegistry.registerType(ResourceLocations.resourceLocations("cooking"));
     }
 }

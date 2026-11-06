@@ -13,7 +13,8 @@
       "tag": "forge:crops/tomato"
     },
     {
-      "item": "minecraft:ink_sac"
+      "item": "minecraft:dye",
+      "data": 0
     }
   ],
   "recipe_book_tab": "meals",

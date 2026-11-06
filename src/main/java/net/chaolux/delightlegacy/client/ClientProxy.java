@@ -5,11 +5,14 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import net.chaolux.delightlegacy.DelightLegacy;
+import net.chaolux.delightlegacy.client.gui.CookingPotScreen;
 import net.chaolux.delightlegacy.client.renderer.CuttingBoardRenderer;
 import net.chaolux.delightlegacy.client.renderer.StoveRenderer;
 import net.chaolux.delightlegacy.common.CommonProxy;
+import net.chaolux.delightlegacy.common.block.entity.CookingPotBlockEntity;
 import net.chaolux.delightlegacy.common.block.entity.CuttingBoardBlockEntity;
 import net.chaolux.delightlegacy.common.block.entity.StoveBlockEntity;
+import net.chaolux.delightlegacy.common.block.entity.container.CookingPotMenu;
 import net.chaolux.delightlegacy.legacy.assets.ClassPathResourceProvider;
 import net.chaolux.delightlegacy.legacy.assets.LegacyPackType;
 import net.chaolux.delightlegacy.legacy.assets.LegacyResources;
@@ -21,6 +24,9 @@ import net.chaolux.delightlegacy.registry.ModClientModels;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 
 public class ClientProxy extends CommonProxy {
     @Override
@@ -44,5 +50,13 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void postInit(FMLPostInitializationEvent fmlPostInitializationEvent) {
 
+    }
+
+    @Override
+    public Object getClientGuiElement(int value, EntityPlayer entityPlayer, World world,int x,int y,int z) {
+        if(value != 0) return null;
+        TileEntity tileEntity=world.getTileEntity(x,y,z);
+        if(!(tileEntity instanceof CookingPotBlockEntity)) return null;
+        return new CookingPotScreen(new CookingPotMenu(entityPlayer.inventory,(CookingPotBlockEntity)tileEntity));
     }
 }

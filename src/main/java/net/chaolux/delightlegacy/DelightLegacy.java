@@ -56,4 +56,7 @@ public class DelightLegacy {
         COMMON_PROXY.postInit(fmlPostInitializationEvent);
 
     }
+
+    @Mod.Instance(DelightLegacy.MOD_ID)
+    public static DelightLegacy DELIGHT_LEGACY;
 }

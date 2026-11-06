@@ -19,16 +19,16 @@
   },
   "block.cooking_pot.boil": {
     "sounds": [
-      "farmersdelight:block/cooking_pot/boil_water1",
-      "farmersdelight:block/cooking_pot/boil_water2"
+      "block/cooking_pot/boil_water1",
+      "block/cooking_pot/boil_water2"
     ],
     "subtitle": "subtitles.farmersdelight.block.cooking_pot.boil"
   },
   "block.cooking_pot.boil_soup": {
     "sounds": [
-      "farmersdelight:block/cooking_pot/boil_soup1",
-      "farmersdelight:block/cooking_pot/boil_soup2",
-      "farmersdelight:block/cooking_pot/boil_soup3"
+      "block/cooking_pot/boil_soup1",
+      "block/cooking_pot/boil_soup2",
+      "block/cooking_pot/boil_soup3"
     ],
     "subtitle": "subtitles.farmersdelight.block.cooking_pot.boil"
   },

@@ -1,6 +1,7 @@
 package net.chaolux.delightlegacy.registry;
 
 import net.chaolux.delightlegacy.common.block.*;
+import net.chaolux.delightlegacy.common.item.CookingPotItem;
 import net.chaolux.delightlegacy.legacy.assets.blockstates.LegacyCropStateMapper;
 import net.chaolux.delightlegacy.legacy.assets.blockstates.LegacyDataStateMapper;
 import net.chaolux.delightlegacy.legacy.common.block.LegacyBlockProperties;
@@ -15,7 +16,7 @@ public class ModBlocks {
 
     public static final LegacyBlockRegister<Block> BLOCKS;
     public static final LegacyBlockRegistryObject<Block> STOVE;
-//    public static final RegistryObject<Block> COOKING_POT;
+    public static final LegacyBlockRegistryObject<Block> COOKING_POT;
 //    public static final RegistryObject<Block> SKILLET;
 //    public static final RegistryObject<Block> WOODEN_BASKET;
 //    public static final RegistryObject<Block> BAMBOO_BASKET;
@@ -166,7 +167,7 @@ public class ModBlocks {
     static {
         BLOCKS = new LegacyBlockRegister<Block>("delightlegacy",ModCreativeTabs.DELIGHT_LEGACY);
         STOVE = BLOCKS.register("stove", () -> new StoveBlock(LegacyBlockProperties.copy(Material.rock).strength(2.0f).sound(Block.soundTypeStone))).blockStateMapper(LegacyDataStateMapper.builder().variant(0,"facing=north,lit=false").variant(1,"facing=east,lit=false").variant(2,"facing=south,lit=false").variant(3,"facing=west,lit=false").variant(4,"facing=north,lit=true").variant(5,"facing=east,lit=true").variant(6,"facing=south,lit=true").variant(7,"facing=west,lit=true").build());
-//        COOKING_POT = BLOCKS.register("cooking_pot", () -> new CookingPotBlock(Properties.of().mapColor(MapColor.METAL).strength(0.5F, 6.0F).sound(SoundType.LANTERN)));
+        COOKING_POT = BLOCKS.register("cooking_pot", () -> new CookingPotBlock(LegacyBlockProperties.copy(Material.iron).strength(0.5F).sound(Block.soundTypeMetal))).blockStateMapper(LegacyDataStateMapper.builder().variant(0,"facing=north,support=none").variant(1,"facing=east,support=none").variant(2,"facing=south,support=none").variant(3,"facing=west,support=none").variant(4,"facing=north,support=tray").variant(5,"facing=east,support=tray").variant(6,"facing=south,support=tray").variant(7,"facing=west,support=tray").variant(8,"facing=north,support=handle").variant(9,"facing=east,support=handle").variant(10,"facing=south,support=handle").variant(11,"facing=west,support=handle").build()).itemBlock(CookingPotItem.class);
 //        SKILLET = BLOCKS.register("skillet", () -> new SkilletBlock(Properties.of().mapColor(MapColor.METAL).strength(0.5F, 6.0F).sound(SoundType.LANTERN)));
 //        WOODEN_BASKET = BLOCKS.register("wooden_basket", () -> new BasketBlock(Properties.of().strength(1.5F).sound(SoundType.WOOD)));
 //        BAMBOO_BASKET = BLOCKS.register("bamboo_basket", () -> new BasketBlock(Properties.of().strength(1.5F).sound(SoundType.BAMBOO_WOOD)));
