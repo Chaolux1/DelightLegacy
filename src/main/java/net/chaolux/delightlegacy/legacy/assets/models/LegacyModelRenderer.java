@@ -215,8 +215,8 @@ public class LegacyModelRenderer {
         int yRotate=normalize(rotateY);
         for(int index=0;index < xRotate;index++) {
             float indexY=y;
-            y=-z;
-            z=indexY;
+            y=z;
+            z=-indexY;
         }
         for (int index=0;index < yRotate;index++) {
             float indexX=x;

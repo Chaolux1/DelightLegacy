@@ -9,10 +9,7 @@ import net.chaolux.delightlegacy.client.gui.CookingPotScreen;
 import net.chaolux.delightlegacy.client.renderer.CuttingBoardRenderer;
 import net.chaolux.delightlegacy.client.renderer.StoveRenderer;
 import net.chaolux.delightlegacy.common.CommonProxy;
-import net.chaolux.delightlegacy.common.block.entity.CabinetBlockEntity;
-import net.chaolux.delightlegacy.common.block.entity.CookingPotBlockEntity;
-import net.chaolux.delightlegacy.common.block.entity.CuttingBoardBlockEntity;
-import net.chaolux.delightlegacy.common.block.entity.StoveBlockEntity;
+import net.chaolux.delightlegacy.common.block.entity.*;
 import net.chaolux.delightlegacy.common.block.entity.container.CookingPotMenu;
 import net.chaolux.delightlegacy.legacy.assets.ClassPathResourceProvider;
 import net.chaolux.delightlegacy.legacy.assets.LegacyPackType;
@@ -56,9 +53,10 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public Object getClientGuiElement(int value, EntityPlayer entityPlayer, World world,int x,int y,int z) {
-        if(value != 0 && value != 1) return null;
+        if(value != 0 && value != 1 && value != 2) return null;
         TileEntity tileEntity=world.getTileEntity(x,y,z);
         if(value == 1) return tileEntity instanceof CabinetBlockEntity ? new GuiChest(entityPlayer.inventory,(CabinetBlockEntity)tileEntity) : null;
+        if(value == 2) return tileEntity instanceof BasketBlockEntity ? new GuiChest(entityPlayer.inventory,(BasketBlockEntity)tileEntity) : null;
         if(!(tileEntity instanceof CookingPotBlockEntity)) return null;
         return new CookingPotScreen(new CookingPotMenu(entityPlayer.inventory,(CookingPotBlockEntity)tileEntity));
     }

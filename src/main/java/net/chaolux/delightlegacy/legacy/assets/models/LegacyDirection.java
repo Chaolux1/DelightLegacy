@@ -43,8 +43,8 @@ public enum LegacyDirection {
         int normalizeY=normalize(rotateY);
         for(int index=0;index < normalizeX;index++) {
             int currentY=y;
-            y=-z;
-            z=currentY;
+            y=z;
+            z=-currentY;
         }
         for (int index=0;index < normalizeY;index++) {
             int currentX=x;

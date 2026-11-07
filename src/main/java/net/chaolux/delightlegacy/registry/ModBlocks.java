@@ -18,8 +18,8 @@ public class ModBlocks {
     public static final LegacyBlockRegistryObject<Block> STOVE;
     public static final LegacyBlockRegistryObject<Block> COOKING_POT;
 //    public static final RegistryObject<Block> SKILLET;
-//    public static final RegistryObject<Block> WOODEN_BASKET;
-//    public static final RegistryObject<Block> BAMBOO_BASKET;
+    public static final LegacyBlockRegistryObject<Block> WOODEN_BASKET;
+    public static final LegacyBlockRegistryObject<Block> BAMBOO_BASKET;
     public static final LegacyBlockRegistryObject<Block> CUTTING_BOARD;
 //    /** @deprecated */
 //    @Deprecated(
@@ -169,8 +169,8 @@ public class ModBlocks {
         STOVE = BLOCKS.register("stove", () -> new StoveBlock(LegacyBlockProperties.copy(Material.rock).strength(2.0f).sound(Block.soundTypeStone))).blockStateMapper(StoveBlock.STATE_MAPPER);
         COOKING_POT = BLOCKS.register("cooking_pot", () -> new CookingPotBlock(LegacyBlockProperties.copy(Material.iron).strength(0.5F).sound(Block.soundTypeMetal))).blockStateMapper(CookingPotBlock.STATE_MAPPER).itemBlock(CookingPotItem.class);
 //        SKILLET = BLOCKS.register("skillet", () -> new SkilletBlock(Properties.of().mapColor(MapColor.METAL).strength(0.5F, 6.0F).sound(SoundType.LANTERN)));
-//        WOODEN_BASKET = BLOCKS.register("wooden_basket", () -> new BasketBlock(Properties.of().strength(1.5F).sound(SoundType.WOOD)));
-//        BAMBOO_BASKET = BLOCKS.register("bamboo_basket", () -> new BasketBlock(Properties.of().strength(1.5F).sound(SoundType.BAMBOO_WOOD)));
+        WOODEN_BASKET = BLOCKS.register("wooden_basket", () -> new BasketBlock(LegacyBlockProperties.copy(Material.wood).strength(1.5F).sound(Block.soundTypeWood))).blockStateMapper(BasketBlock.STATE_MAPPER);
+        BAMBOO_BASKET = BLOCKS.register("bamboo_basket", () -> new BasketBlock(LegacyBlockProperties.copy(Material.wood).strength(1.5F).sound(Block.soundTypeWood))).blockStateMapper(BasketBlock.STATE_MAPPER);
         CUTTING_BOARD = BLOCKS.register("cutting_board", () -> new CuttingBoardBlock(LegacyBlockProperties.copy(Material.wood).strength(2.0F).sound(Block.soundTypeWood))).blockStateMapper(CuttingBoardBlock.STATE_MAPPER);
 //        BASKET = BAMBOO_BASKET;
 //        CARROT_CRATE = BLOCKS.register("carrot_crate", () -> new Block(Properties.copy(Blocks.OAK_PLANKS).strength(2.0F, 3.0F).sound(SoundType.WOOD)));
