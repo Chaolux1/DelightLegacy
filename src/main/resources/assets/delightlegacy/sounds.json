@@ -70,7 +70,7 @@
     "sounds": [
       {
         "type": "event",
-        "name": "block.wool.break"
+        "name": "dig.cloth"
       }
     ],
     "subtitle": "subtitles.farmersdelight.block.food.slice"
@@ -79,7 +79,7 @@
     "sounds": [
       {
         "type": "event",
-        "name": "item.armor.equip_generic"
+        "name": "random.pop"
       }
     ],
     "subtitle": "subtitles.farmersdelight.block.food.take_portion"

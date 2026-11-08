@@ -1,7 +1,9 @@
 package net.chaolux.delightlegacy.registry;
 
+import net.chaolux.delightlegacy.common.BlockShapes;
 import net.chaolux.delightlegacy.common.block.*;
 import net.chaolux.delightlegacy.common.item.CookingPotItem;
+import net.chaolux.delightlegacy.common.item.PlaceableItem;
 import net.chaolux.delightlegacy.legacy.assets.blockstates.LegacyCropStateMapper;
 import net.chaolux.delightlegacy.legacy.assets.blockstates.LegacyDataStateMapper;
 import net.chaolux.delightlegacy.legacy.common.block.LegacyBlockProperties;
@@ -10,6 +12,7 @@ import net.chaolux.delightlegacy.legacy.registry.LegacyBlockRegistryObject;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 
 public class ModBlocks {
@@ -127,10 +130,10 @@ public class ModBlocks {
     public static final LegacyBlockRegistryObject<Block> ORGANIC_COMPOST;
     public static final LegacyBlockRegistryObject<Block> RICH_SOIL;
     public static final LegacyBlockRegistryObject<Block> RICH_SOIL_FARMLAND;
-//    public static final RegistryObject<Block> APPLE_PIE;
-//    public static final RegistryObject<Block> SWEET_BERRY_CHEESECAKE;
-//    public static final RegistryObject<Block> CHOCOLATE_PIE;
-//    public static final RegistryObject<Block> PUMPKIN_PIE;
+    public static final LegacyBlockRegistryObject<Block> APPLE_PIE;
+    public static final LegacyBlockRegistryObject<Block> SWEET_BERRY_CHEESECAKE;
+    public static final LegacyBlockRegistryObject<Block> CHOCOLATE_PIE;
+    public static final LegacyBlockRegistryObject<Block> PUMPKIN_PIE;
 //    public static final RegistryObject<Block> SANDY_SHRUB;
 //    public static final RegistryObject<Block> WILD_CABBAGES;
 //    public static final RegistryObject<Block> WILD_ONIONS;
@@ -146,12 +149,12 @@ public class ModBlocks {
 //    public static final RegistryObject<Block> TOMATO_CROP_ON_ROPE;
     public static final LegacyBlockRegistryObject<Block> RICE_CROP;
     public static final LegacyBlockRegistryObject<Block> RICE_CROP_PANICLES;
-//    public static final RegistryObject<Block> ROAST_CHICKEN_BLOCK;
-//    public static final RegistryObject<Block> STUFFED_PUMPKIN_BLOCK;
-//    public static final RegistryObject<Block> HONEY_GLAZED_HAM_BLOCK;
-//    public static final RegistryObject<Block> SHEPHERDS_PIE_BLOCK;
-//    public static final RegistryObject<Block> GLEAMING_SALAD_BLOCK;
-//    public static final RegistryObject<Block> RICE_ROLL_MEDLEY_BLOCK;
+    public static final LegacyBlockRegistryObject<Block> ROAST_CHICKEN_BLOCK;
+    public static final LegacyBlockRegistryObject<Block> STUFFED_PUMPKIN_BLOCK;
+    public static final LegacyBlockRegistryObject<Block> HONEY_GLAZED_HAM_BLOCK;
+    public static final LegacyBlockRegistryObject<Block> SHEPHERDS_PIE_BLOCK;
+    public static final LegacyBlockRegistryObject<Block> GLEAMING_SALAD_BLOCK;
+    public static final LegacyBlockRegistryObject<Block> RICE_ROLL_MEDLEY_BLOCK;
 
     public ModBlocks() {
     }
@@ -274,14 +277,15 @@ public class ModBlocks {
         ORGANIC_COMPOST = BLOCKS.register("organic_compost", () -> new OrganicCompostBlock(LegacyBlockProperties.copy(Material.ground).strength(1.2F).sound(Block.soundTypeGrass).randomTicks())).blockStateMapper(LegacyDataStateMapper.legacyDataStateMapper("composting",0,7));
         RICH_SOIL = BLOCKS.register("rich_soil", () -> new RichSoilBlock(LegacyBlockProperties.copy(Material.ground).strength(0.5F).sound(Block.soundTypeGravel).randomTicks()));
         RICH_SOIL_FARMLAND = BLOCKS.register("rich_soil_farmland", () -> new RichSoilFarmlandBlock(LegacyBlockProperties.copy(Material.ground).strength(0.6F).sound(Block.soundTypeGravel).randomTicks())).blockStateMapper(LegacyDataStateMapper.legacyDataStateMapper("moisture",0,7));
-//        APPLE_PIE = BLOCKS.register("apple_pie", () -> new PieBlock(Properties.copy(Blocks.CAKE), ModItems.APPLE_PIE_SLICE));
-//        SWEET_BERRY_CHEESECAKE = BLOCKS.register("sweet_berry_cheesecake", () -> new PieBlock(Properties.copy(Blocks.CAKE), ModItems.SWEET_BERRY_CHEESECAKE_SLICE));
-//        CHOCOLATE_PIE = BLOCKS.register("chocolate_pie", () -> new PieBlock(Properties.copy(Blocks.CAKE), ModItems.CHOCOLATE_PIE_SLICE));
-//        PUMPKIN_PIE = BLOCKS.register("pumpkin_pie", () -> new PieBlock(Properties.copy(Blocks.CAKE), ModItems.PUMPKIN_PIE_SLICE) {
-//            public @NotNull ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state) {
-//                return new ItemStack(Items.PUMPKIN_PIE);
-//            }
-//        });
+        APPLE_PIE = BLOCKS.register("apple_pie", () -> new PieBlock(LegacyBlockProperties.copy(Material.cake).strength(0.5f).sound(Block.soundTypeCloth),() -> ModItems.APPLE_PIE_SLICE.getValue())).blockStateMapper(PieBlock.STATE_MAPPER).itemBlock(PlaceableItem.class);
+        SWEET_BERRY_CHEESECAKE = BLOCKS.register("sweet_berry_cheesecake", () -> new PieBlock(LegacyBlockProperties.copy(Material.cake).strength(0.5f).sound(Block.soundTypeCloth),() -> ModItems.SWEET_BERRY_CHEESECAKE_SLICE.getValue())).blockStateMapper(PieBlock.STATE_MAPPER).itemBlock(PlaceableItem.class);
+        CHOCOLATE_PIE = BLOCKS.register("chocolate_pie", () -> new PieBlock(LegacyBlockProperties.copy(Material.cake).strength(0.5f).sound(Block.soundTypeCloth),() -> ModItems.CHOCOLATE_PIE_SLICE.getValue())).blockStateMapper(PieBlock.STATE_MAPPER).itemBlock(PlaceableItem.class);
+        PUMPKIN_PIE = BLOCKS.registerNone("pumpkin_pie", () -> new PieBlock(LegacyBlockProperties.copy(Material.cake).strength(0.5f).sound(Block.soundTypeCloth),() -> ModItems.PUMPKIN_PIE_SLICE.getValue()) {
+            @Override
+            protected Item getPie() {
+                return Items.pumpkin_pie;
+            }
+        }).blockStateMapper(PieBlock.STATE_MAPPER);
 //        SANDY_SHRUB = BLOCKS.register("sandy_shrub", () -> new SandyShrubBlock(Properties.copy(Blocks.TALL_GRASS)));
 //        WILD_CABBAGES = BLOCKS.register("wild_cabbages", () -> new WildCropBlock(MobEffects.DAMAGE_BOOST, 6, Properties.copy(Blocks.TALL_GRASS)));
 //        WILD_ONIONS = BLOCKS.register("wild_onions", () -> new WildCropBlock(MobEffects.FIRE_RESISTANCE, 6, Properties.copy(Blocks.TALL_GRASS)));
@@ -297,12 +301,12 @@ public class ModBlocks {
 //        TOMATO_CROP_ON_ROPE = BLOCKS.register("tomatoes_on_rope", () -> new HangingTomatoBlock(Properties.copy((BlockBehaviour)TOMATO_CROP.get()).pushReaction(PushReaction.NORMAL)));
         RICE_CROP = BLOCKS.registerNone("rice", RiceCropBlock::new).blockStateMapper(LegacyCropStateMapper.rice());
         RICE_CROP_PANICLES = BLOCKS.registerNone("rice_panicles",RicePaniclesBlock::new).blockStateMapper(LegacyCropStateMapper.dataStateMapper(3));
-//        ROAST_CHICKEN_BLOCK = BLOCKS.register("roast_chicken_block", () -> new RotatedFeastBlock(Properties.copy(Blocks.OAK_PLANKS), ModItems.ROAST_CHICKEN, true, BlockShapes.ROAST_CHICKEN_SHAPES, BlockShapes.TRAY_SHAPE));
-//        STUFFED_PUMPKIN_BLOCK = BLOCKS.register("stuffed_pumpkin_block", () -> new FeastBlock(Properties.copy(Blocks.PUMPKIN), ModItems.STUFFED_PUMPKIN, false, true));
-//        HONEY_GLAZED_HAM_BLOCK = BLOCKS.register("honey_glazed_ham_block", () -> new RotatedFeastBlock(Properties.copy(Blocks.OAK_PLANKS), ModItems.HONEY_GLAZED_HAM, true, BlockShapes.HONEY_GLAZED_HAM_SHAPES, BlockShapes.TRAY_SHAPE));
-//        SHEPHERDS_PIE_BLOCK = BLOCKS.register("shepherds_pie_block", () -> new RotatedFeastBlock(Properties.copy(Blocks.OAK_PLANKS), ModItems.SHEPHERDS_PIE, true, BlockShapes.SHEPHERDS_PIE_SHAPES, BlockShapes.TRAY_SHAPE));
-//        GLEAMING_SALAD_BLOCK = BLOCKS.register("gleaming_salad_block", () -> new GleamingSaladBlock(Properties.copy(Blocks.OAK_PLANKS).lightLevel(glowingFeastBlockEmission()), ModItems.GLEAMING_SALAD, true));
-//        RICE_ROLL_MEDLEY_BLOCK = BLOCKS.register("rice_roll_medley_block", () -> new RiceRollMedleyBlock(Properties.copy(Blocks.OAK_PLANKS)));
+        ROAST_CHICKEN_BLOCK = BLOCKS.register("roast_chicken_block", () -> new RotatedFeastBlock(LegacyBlockProperties.copy(Material.wood).strength(0.5f).sound(Block.soundTypeWood),() -> ModItems.ROAST_CHICKEN.getValue(),true, BlockShapes.ROAST_CHICKEN_SHAPES)).blockStateMapper(FeastBlock.STATE_MAPPER).itemBlock(PlaceableItem.class);
+        STUFFED_PUMPKIN_BLOCK = BLOCKS.register("stuffed_pumpkin_block", () -> new FeastBlock(LegacyBlockProperties.copy(Material.wood).strength(0.5f).sound(Block.soundTypeWood),() -> ModItems.STUFFED_PUMPKIN.getValue(),false,true)).blockStateMapper(FeastBlock.STATE_MAPPER).itemBlock(PlaceableItem.class);
+        HONEY_GLAZED_HAM_BLOCK = BLOCKS.register("honey_glazed_ham_block", () -> new RotatedFeastBlock(LegacyBlockProperties.copy(Material.wood).strength(0.5f).sound(Block.soundTypeWood),() -> ModItems.HONEY_GLAZED_HAM.getValue(),true, BlockShapes.HONEY_GLAZED_HAM_SHAPES)).blockStateMapper(FeastBlock.STATE_MAPPER).itemBlock(PlaceableItem.class);
+        SHEPHERDS_PIE_BLOCK = BLOCKS.register("shepherds_pie_block", () -> new RotatedFeastBlock(LegacyBlockProperties.copy(Material.wood).strength(0.5f).sound(Block.soundTypeWood),() -> ModItems.SHEPHERDS_PIE.getValue(),true, BlockShapes.SHEPHERDS_PIE_SHAPES)).blockStateMapper(FeastBlock.STATE_MAPPER).itemBlock(PlaceableItem.class);
+        GLEAMING_SALAD_BLOCK = BLOCKS.register("gleaming_salad_block", () -> new GleamingSaladBlock(LegacyBlockProperties.copy(Material.wood).strength(0.5f).sound(Block.soundTypeWood),() -> ModItems.GLEAMING_SALAD.getValue(),true)).blockStateMapper(FeastBlock.STATE_MAPPER).itemBlock(PlaceableItem.class);
+        RICE_ROLL_MEDLEY_BLOCK = BLOCKS.register("rice_roll_medley_block", () -> new RiceRollMedleyBlock(LegacyBlockProperties.copy(Material.wood).strength(0.5f).sound(Block.soundTypeWood))).blockStateMapper(FeastBlock.STATE_MAPPER).itemBlock(PlaceableItem.class);
     }
 
     public static void register() {

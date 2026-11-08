@@ -2,11 +2,13 @@ package net.chaolux.delightlegacy.common.event;
 
 import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import net.chaolux.delightlegacy.common.block.PieBlock;
 import net.chaolux.delightlegacy.common.block.entity.CuttingBoardBlockEntity;
 import net.chaolux.delightlegacy.common.utility.ItemUtils;
 import net.chaolux.delightlegacy.registry.ModBlocks;
 import net.chaolux.delightlegacy.registry.ModItems;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockContainer;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.EntitySpider;
@@ -15,6 +17,7 @@ import net.minecraft.entity.passive.EntityCow;
 import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.entity.passive.EntityPig;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -66,6 +69,48 @@ public class CommonEvents {
             float fortune=Math.min(1.0f,0.5f + 0.1f * EnchantmentHelper.getLootingModifier(entityPlayer));
             if(livingDropsEvent.entityLiving.worldObj.rand.nextFloat() < fortune) setDrop(livingDropsEvent,new ItemStack(livingDropsEvent.entityLiving.isBurning() ? ModItems.SMOKED_HAM.getValue() : ModItems.HAM.getValue()));
         }
+    }
+
+    @SubscribeEvent
+    public void onPlayerInteract(PlayerInteractEvent playerInteractEvent) {
+        if(playerInteractEvent.action != PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK || playerInteractEvent.entityPlayer == null) return;
+        if(playerInteractEvent.world.isRemote) return;
+        ItemStack itemStack=playerInteractEvent.entityPlayer.getCurrentEquippedItem();
+        if(itemStack == null || itemStack.getItem() != Items.pumpkin_pie) return;
+        World world=playerInteractEvent.world;
+        if(world.getBlock(playerInteractEvent.x,playerInteractEvent.y,playerInteractEvent.z) instanceof PieBlock) return;
+        if(!playerInteractEvent.entityPlayer.isSneaking() && world.getBlock(playerInteractEvent.x,playerInteractEvent.y,playerInteractEvent.z) instanceof BlockContainer) return;
+        int x=playerInteractEvent.x;
+        int y=playerInteractEvent.y;
+        int z= playerInteractEvent.z;
+        if(!world.getBlock(x,y,z).isReplaceable(world,x,y,z)) {
+            switch (playerInteractEvent.face) {
+                case 0: y--;
+                break;
+                case 1: y++;
+                break;
+                case 2: z--;
+                break;
+                case 3: z++;
+                break;
+                case 4: x--;
+                break;
+                case 5: x++;
+                break;
+                default: return;
+            }
+        }
+        Block block=ModBlocks.PUMPKIN_PIE.get();
+        if(!world.isAirBlock(x,y,z) || !block.canPlaceBlockAt(world,x,y,z)) return;
+        if(!playerInteractEvent.entityPlayer.canPlayerEdit(x,y,z,playerInteractEvent.face,itemStack)) return;
+        if(!world.isRemote && world.setBlock(x,y,z,block,0,3)) {
+            block.onBlockPlacedBy(world,x,y,z,playerInteractEvent.entityPlayer,itemStack);
+            world.playSoundEffect(x + 0.5,y + 0.5,z + 0.5,"dig.cloth",0.8f,1.0f);
+            if(!playerInteractEvent.entityPlayer.capabilities.isCreativeMode && --itemStack.stackSize <= 0) playerInteractEvent.entityPlayer.inventory.setInventorySlotContents(playerInteractEvent.entityPlayer.inventory.currentItem,null);
+            playerInteractEvent.entityPlayer.inventory.markDirty();
+            if(playerInteractEvent.entityPlayer instanceof EntityPlayerMP) ((EntityPlayerMP)playerInteractEvent.entityPlayer).sendContainerToPlayer(playerInteractEvent.entityPlayer.inventoryContainer);
+        }
+        playerInteractEvent.setCanceled(true);
     }
 
     private static void setDrop(LivingDropsEvent livingDropsEvent,ItemStack itemStack) {

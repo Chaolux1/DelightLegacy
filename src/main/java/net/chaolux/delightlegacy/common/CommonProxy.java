@@ -36,6 +36,7 @@ public class CommonProxy implements IGuiHandler {
         GameRegistry.registerTileEntity(CookingPotBlockEntity.class,"delightlegacy:cooking_pot");
         GameRegistry.registerTileEntity(CabinetBlockEntity.class,"delightlegacy:cabinet");
         GameRegistry.registerTileEntity(BasketBlockEntity.class,"delightlegacy:basket");
+        GameRegistry.registerTileEntity(FeastBlockEntity.class,"delightlegacy:feast");
 
     }
 

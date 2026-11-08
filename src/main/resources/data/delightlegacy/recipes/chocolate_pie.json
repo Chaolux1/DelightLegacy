@@ -7,7 +7,8 @@
       "item": "farmersdelight:pie_crust"
     },
     "c": {
-      "item": "minecraft:cocoa_beans"
+      "item": "minecraft:dye",
+      "data": 3
     },
     "m": {
       "tag": "forge:milk"
